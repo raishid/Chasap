@@ -63,7 +63,7 @@ Si deseas contribuir a **Chasap**, puedes hacer un **fork** del proyecto y envia
 ## 👤 AUTOR
 
 **Luis Cárdenas**  
-📞 +52 1 938 126 1750  
+📞 938 126 1750  
 📧 l_cardenas83@hotmail.com  
 
 ## 🙌 AGRADECIMIENTOS
