@@ -23,8 +23,9 @@
 
 1. **Clona este repositorio:**  
    ```sh
-   git clone https://github.com/tu-usuario/chasap.git
+   git clone https://github.com/MinoruMX/Chasap.git
    cd chasap
+   cd backend
    ```
 
 2. **Instala las dependencias:**  
@@ -47,6 +48,7 @@
    ```sh
    npm start
    ```
+6. **Repetir Proceso con Frontend:** 
 
 ## 💻 USO
 
