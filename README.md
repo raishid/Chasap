@@ -1,72 +1,75 @@
-Chasap
+# CHASAP
 
-Chasap es una aplicación basada en Whaticket, diseñada para la gestión eficiente de mensajes de WhatsApp en empresas y negocios. Permite la administración centralizada de conversaciones, optimizando la comunicación con clientes.
+**Chasap** es una aplicación basada en *Whaticket*, diseñada para la gestión eficiente de mensajes de **WhatsApp** en empresas y negocios. Permite la administración centralizada de conversaciones, optimizando la comunicación con clientes.
 
-Características
+## ✨ CARACTERÍSTICAS
 
-Multiusuario: Permite a múltiples agentes manejar conversaciones desde una sola plataforma.
+- **Multiusuario:** Permite a múltiples agentes manejar conversaciones desde una sola plataforma.  
+- **Integración con WhatsApp Web:** Sincronización con WhatsApp para responder mensajes en tiempo real.  
+- **Gestión de Contactos:** Organización de clientes con etiquetas y notas.  
+- **Respuestas Automáticas:** Configuración de respuestas automáticas para mejorar la atención.  
+- **Reportes y Estadísticas:** Monitoreo del rendimiento de los agentes y el volumen de conversaciones.  
+- **Seguridad:** Protección de datos con encriptación y acceso controlado por roles.  
 
-Integración con WhatsApp Web: Sincronización con WhatsApp para responder mensajes en tiempo real.
+## 🛠 INSTALACIÓN
 
-Gestión de Contactos: Organización de clientes con etiquetas y notas.
+### ⚡ REQUISITOS PREVIOS
 
-Respuestas Automáticas: Configuración de respuestas automáticas para mejorar la atención.
+- **Node.js v22+**  
+- **PostgreSQL**  
+- **Redis**  
 
-Reportes y Estadísticas: Monitoreo del rendimiento de los agentes y el volumen de conversaciones.
+### ⚙ PASOS
 
-Seguridad: Protección de datos con encriptación y acceso controlado por roles.
+1. **Clona este repositorio:**  
+   ```sh
+   git clone https://github.com/tu-usuario/chasap.git
+   cd chasap
+   ```
 
-Instalación
+2. **Instala las dependencias:**  
+   ```sh
+   npm install
+   ```
 
-Requisitos Previos
+3. **Configura las variables de entorno:**  
+   ```sh
+   cp .env.example .env
+   nano .env
+   ```
 
-Node.js v22+
+4. **Compila la aplicación:**  
+   ```sh
+   npm run build
+   ```
 
+5. **Inicia la aplicación:**  
+   ```sh
+   npm start
+   ```
 
-Posgres
-Redis
+## 💻 USO
 
-Pasos
+1. Abre el navegador y accede a **[http://localhost:3000](http://localhost:3000)**  
+2. Escanea el código QR con **WhatsApp Web**  
+3. Empieza a gestionar conversaciones con tus clientes  
 
-Clona este repositorio:
+## ✨ CONTRIBUCIONES
 
-git clone https://github.com/tu-usuario/chasap.git
-cd chasap
+Si deseas contribuir a **Chasap**, puedes hacer un **fork** del proyecto y enviar un **pull request** con mejoras o correcciones.
 
-Instala las dependencias:
+## 👤 AUTOR
 
-npm install
+**Luis Cárdenas**  
+📞 938 126 1750  
+📧 l_cardenas83@hotmail.com  
 
-Configura las variables de entorno (copia .env.example a .env y personalízalo):
+## 🙌 AGRADECIMIENTOS
 
-cp .env.example .env
-nano .env
+Agradecemos a todos los colaboradores y usuarios que han apoyado el desarrollo de Chasap. Su retroalimentación y contribuciones han sido clave para mejorar esta herramienta.
+- Calendario (Traducción) : BJAR
 
-Compila la aplicacion:
-npm run build
+## ⚖️ LICENCIA
 
-Inicia la aplicación:
-
-npm start
-
-Uso
-
-Abre el navegador y accede a http://localhost:3000
-
-Escanea el código QR con WhatsApp Web
-
-Empieza a gestionar conversaciones con tus clientes
-
-Contribuciones
-
-Si deseas contribuir a Chasap, puedes hacer un fork del proyecto y enviar un pull request con mejoras o correcciones.
-
-Autor
-
-Luis Cárdenas (938 126 1750)
-l_cardenas83@hotmail.com
-
-Licencia
-
-Este proyecto está bajo la licencia MIT.
+Este proyecto está bajo la licencia **MIT**.
 
