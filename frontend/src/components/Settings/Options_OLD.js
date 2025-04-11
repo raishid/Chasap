@@ -466,8 +466,8 @@ export default function Options(props) {
                 handleChangeUserRating(e.target.value);
               }}
             >
-              <MenuItem value={"disabled"}>Desabilitadas</MenuItem>
-              <MenuItem value={"enabled"}>Habilitadas</MenuItem>
+              <MenuItem value={"disabled"}>Desactivada</MenuItem>
+              <MenuItem value={"enabled"}>Activada</MenuItem>
             </Select>
             <FormHelperText>
               {loadingUserRating && "Atualizando..."}
@@ -665,7 +665,7 @@ export default function Options(props) {
 				  <Grid xs={12} sm={12} md={12} item>
                 <FormControl className={classes.selectContainer}>
                   <InputLabel id='viewregister-label'>
-                    Registro (Inscrição) Visível?
+                    ¿Registro (Inscripción) Visible?
                   </InputLabel>
                   <Select
                     labelId='viewregister-label'
@@ -674,8 +674,8 @@ export default function Options(props) {
                       handleviewregister(e.target.value);
                     }}
                   >
-                    <MenuItem value={'disabled'}>Não</MenuItem>
-                    <MenuItem value={'enabled'}>Sim</MenuItem>
+                    <MenuItem value={'disabled'}>No</MenuItem>
+                    <MenuItem value={'enabled'}>Si</MenuItem>
                   </Select>
                   <FormHelperText>
                     {loadingviewregister && 'Atualizando...'}

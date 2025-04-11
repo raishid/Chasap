@@ -1,8 +1,8 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
-  "versionSystem": "10.9.0",
-  "nomeEmpresa": "Whaticket Saas",
+  "version": "1.0.1",
+  "versionSystem": "1.0.1",
+  "nomeEmpresa": "Chasap",
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "^2.14.0",

@@ -144,17 +144,17 @@ const messages = {
         form: {
           name: "Nombre",
           default: "Predeterminado",
-          sendIdQueue: "Cola",
-          timeSendQueue: "Redirigir a la cola en X minutos",
-          queueRedirection: "Redirección de Cola",
+          sendIdQueue: "Fila",
+          timeSendQueue: "Redirigir a la fila en X minutos",
+          queueRedirection: "Redirección de Fila",
           outOfHoursMessage: "Mensaje fuera de horario",
-          queueRedirectionDesc: "Selecciona una cola para redirigir los contactos sin cola.",
+          queueRedirectionDesc: "Selecciona una fila para redirigir los contactos sin fila.",
           prompt: "Prompt",
           expiresTicket: "Cerrar chats abiertos después de x minutos",
           expiresInactiveMessage: "Mensaje de cierre por inactividad",
           greetingMessage: "Mensaje de saludo",
           complationMessage: "Mensaje de finalización",
-          sendIdQueue: "Cola",
+          sendIdQueue: "Fila",
         },
         buttons: {
           okAdd: "Agregar",
@@ -302,8 +302,8 @@ const messages = {
       },
       queueModal: {
         title: {
-          add: "Agregar fila",
-          edit: "Editar fila",
+          add: "Agregar Fila",
+          edit: "Editar Fila",
         },
         confirmationModal: {
           deleteTitle: "Eliminar",
@@ -352,7 +352,7 @@ const messages = {
           password: "Contraseña",
           profile: "Perfil",
           whatsapp: "Conexión predeterminada",
-          allTicket: "Ticket sin cola [Invisible]",
+          allTicket: "Ticket sin fila [Invisible]",
           allTicketEnabled: "Habilitado",
           allTicketDesabled: "Deshabilitado",
         },
@@ -554,7 +554,7 @@ const messages = {
             NPS: "NPS",
             status: "Estado",
             whatsapp: "Conexión",
-            queue: "Cola",
+            queue: "Fila",
             actions: "Acciones",
             lastMessage: "Últ. Mensaje",
             contact: "Cliente",
@@ -830,21 +830,21 @@ const messages = {
           title: "Configuración de Campañas",
         },
         queues: {
-          title: "Colas & Chatbot",
+          title: "Filas & Chatbot",
           table: {
             id: "ID",
             name: "Nombre",
             color: "Color",
             greeting: "Mensaje de saludo",
             actions: "Acciones",
-            orderQueue: "Ordenación de la cola (bot)",
+            orderQueue: "Ordenación de la fila (bot)",
           },
           buttons: {
-            add: "Agregar cola",
+            add: "Agregar fila",
           },
           confirmationModal: {
             deleteTitle: "Eliminar",
-            deleteMessage: "¿Está seguro? ¡Esta acción no puede deshacerse! Los tickets de esta cola seguirán existiendo, pero no tendrán más cola asignada.",
+            deleteMessage: "¿Está seguro? ¡Esta acción no puede deshacerse! Los tickets de esta fila seguirán existiendo, pero no tendrán más fila asignada.",
           },
         },
         queueSelect: {
@@ -872,7 +872,7 @@ const messages = {
           },
           confirmationModal: {
             deleteTitle: "Eliminar",
-            deleteMessage: "Se perderán todos los datos del usuario. Los tickets abiertos de este usuario serán movidos a la cola.",
+            deleteMessage: "Se perderán todos los datos del usuario. Los tickets abiertos de este usuario serán movidos a la fila.",
           },
         },
         helps: {
@@ -1045,7 +1045,7 @@ const messages = {
           ERR_CREATING_TICKET: "Error al crear el ticket en la base de datos.",
           ERR_FETCH_WAPP_MSG: "Error al buscar el mensaje en WhatsApp, tal vez sea demasiado antiguo.",
           ERR_QUEUE_COLOR_ALREADY_EXISTS: "Este color ya está en uso, elija otro.",
-          ERR_WAPP_GREETING_REQUIRED: "El mensaje de saludo es obligatorio cuando hay más de una cola.",
+          ERR_WAPP_GREETING_REQUIRED: "El mensaje de saludo es obligatorio cuando hay más de una fila.",
         },
       },
     },

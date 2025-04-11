@@ -400,7 +400,7 @@ export function CompaniesManagerGrid(props) {
   const { dateToClient } = useDate();
 
   const renderStatus = (row) => {
-    return row.status === false ? "Não" : "Sim";
+    return row.status === false ? "Pausada" : "Activa";
   };
 
   const renderPlan = (row) => {
@@ -415,10 +415,10 @@ export function CompaniesManagerGrid(props) {
     ) {
       const setting = row.settings.find((s) => s.key === "campaignsEnabled");
       if (setting) {
-        return setting.value === "true" ? "Habilitadas" : "Desabilitadas";
+        return setting.value === "true" ? "Habilitadas" : "Desactivadas";
       }
     }
-    return "Desabilitadas";
+    return "Desactivadas";
   };
 
   const rowStyle = (record) => {

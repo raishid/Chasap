@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PromptSchema = Yup.object().shape({
-    name: Yup.string().min(5, "Muito curto!").max(100, "Muito longo!").required("Obrigatório"),
+    name: Yup.string().min(5, "Muito curto!").max(100, "Muito longo!").required("Obligatorio"),
     prompt: Yup.string().min(50, "Muito curto!").required("Descreva o treinamento para Inteligência Artificial"),
     voice: Yup.string().required("Informe o modo para Voz"),
     max_tokens: Yup.number().required("Informe o número máximo de tokens"),

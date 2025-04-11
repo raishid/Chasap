@@ -152,7 +152,7 @@ export function HelpsManagerGrid (props) {
                 <TableRow>
                     <TableCell align="center" style={{width: '1%'}}>#</TableCell>
                     <TableCell align="left">Título</TableCell>
-                    <TableCell align="left">Descrição</TableCell>
+                    <TableCell align="left">Descripción</TableCell>
                     <TableCell align="left">Vídeo</TableCell>
                 </TableRow>
                 </TableHead>

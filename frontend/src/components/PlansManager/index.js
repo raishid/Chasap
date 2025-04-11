@@ -373,7 +373,7 @@ export function PlansManagerGrid(props) {
     };
 
     const renderInternal = (row) => {
-        return row.useInternal === false ? "Sim" : "Não";
+        return row.useInternal === false ? "Si" : "No";
     };
 
     return (

@@ -639,7 +639,7 @@ export default function Options(props) {
 		{/* ENVIAR SAUDAÇÃO QUANDO HOUVER SOMENTE 1 FILA */}
         <Grid xs={12} sm={12} md={12} item>
           <FormControl className={classes.selectContainer}>
-            <InputLabel id="sendGreetingMessageOneQueues-label">Enviar saludo cuando solo hay 1 Fila</InputLabel>
+            <InputLabel id="sendGreetingMessageOneQueues-label">Enviar saludo cuando solo 1 en Fila</InputLabel>
             <Select
               labelId="sendGreetingMessageOneQueues-label"
               value={sendGreetingMessageOneQueues}
@@ -801,15 +801,15 @@ export default function Options(props) {
             marginTop: 20
           }}
         >
-          <Tab
+{/*           <Tab
 
-            label="INTEGRACIONES" />
+            label="INTEGRACIONES" /> */}
 
         </Tabs>
 
       </Grid>
       {/*-----------------IXC-----------------*/}
-      <Grid spacing={3} container
+      {/* <Grid spacing={3} container
         style={{ marginBottom: 10 }}>
         <Tabs
           indicatorColor="primary"
@@ -861,9 +861,9 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-      </Grid>
+      </Grid> */}
       {/*-----------------MK-AUTH-----------------*/}
-      <Grid spacing={3} container
+     {/*  <Grid spacing={3} container
         style={{ marginBottom: 10 }}>
         <Tabs
           indicatorColor="primary"
@@ -932,9 +932,9 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-      </Grid>
+      </Grid> */}
       {/*-----------------ASAAS-----------------*/}
-      <Grid spacing={3} container
+     {/*  <Grid spacing={3} container
         style={{ marginBottom: 10 }}>
         <Tabs
           indicatorColor="primary"
@@ -965,7 +965,7 @@ export default function Options(props) {
             </FormHelperText>
           </FormControl>
         </Grid>
-      </Grid>
+      </Grid> */}
     </>
   );
 }
