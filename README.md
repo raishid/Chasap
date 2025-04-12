@@ -12,6 +12,9 @@
 - **Seguridad:** Protección de datos con encriptación y acceso controlado por roles.  
 
 ## 🛠 INSTALACIÓN
+### VIDEO INSTALACIÓN WINDOWS: https://www.youtube.com/watch?v=0NMyzdb_SPQ
+### VIDEO INSTALACIÓN LINUX:
+### VIDEO INSTALACIÓN VPS:
 
 ### ⚡ REQUISITOS PREVIOS
 
