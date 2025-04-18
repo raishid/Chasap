@@ -211,7 +211,7 @@ const useStyles = makeStyles((theme) => ({
   const [verpreview, setverpreview] = useState(false);
   const { profile } = user;
   const [transferTicketModalOpen, setTransferTicketModalOpen] = useState(false);
-  const presenceMessage = { composing: "Digitando...", recording: "Gravando..." };
+  const presenceMessage = { composing: "Escribiendo...", recording: "Grabando..." };
   
   useEffect(() => {
     if (ticket.userId && ticket.user) {
@@ -367,7 +367,7 @@ const useStyles = makeStyles((theme) => ({
 	
 	    const handleSendMessage = async (id) => {
         
-        const msg = `{{ms}} *{{name}}*, meu nome é *${user?.name}* e agora vou prosseguir com seu atendimento!`;
+        const msg = `{{ms}} *{{name}}*, mi nombre es *${user?.name}* y ahora voy a continuar con tu atención.`;
         const message = {
             read: 1,
             fromMe: true,
