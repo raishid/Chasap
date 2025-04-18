@@ -593,7 +593,7 @@ const convertTextToSpeechAndSaveToFile = (
   filename: string,
   subscriptionKey: string,
   serviceRegion: string,
-  voice: string = "pt-BR-FabioNeural",
+  voice: string = "es-MX-JorgeNeural",
   audioToFormat: string = "mp3"
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -708,7 +708,7 @@ const handleOpenAi = async (
     order: [["createdAt", "ASC"]],
     limit: prompt.maxMessages
   });
-  const promptSystem = `Nas respostas utilize o nome ${sanitizeName(contact.name || "Amigo(a)")} para identificar o cliente.\nSua resposta deve usar no máximo ${prompt.maxTokens} tokens e cuide para não truncar o final.\nSempre que possível, mencione o nome dele para ser mais personalizado o atendimento e mais educado. Quando a resposta requer uma transferência para o setor de atendimento, comece sua resposta com 'Ação: Transferir para o setor de atendimento'.\n${prompt.prompt}\n`;
+  const promptSystem = `En las respuestas, utiliza el nombre ${sanitizeName(contact.name || "Amigo(a)")} para identificar al cliente.\nTu respuesta debe usar como máximo ${prompt.maxTokens} tokens y asegúrate de no cortar el final.\nSiempre que sea posible, menciona su nombre para que la atención sea más personalizada y cordial. Cuando la respuesta requiera una transferencia al sector de atención, comienza tu respuesta con 'Acción: Transferir al sector de atención'.\n${prompt.prompt}\n`;
 
   let messagesOpenAi: { role: string; content: string }[] = [];
 
@@ -741,11 +741,11 @@ const handleOpenAi = async (
 
       let response = chat.choices[0].message?.content;
 
-      if (response?.includes("Ação: Transferir para o setor de atendimento")) {
+      if (response?.includes("Acción: Transferir al sector de atención")) {
         await transferQueue(prompt.queueId, ticket, contact);
-        response = response.replace("Ação: Transferir para o setor de atendimento", "").trim();
+        response = response.replace("Acción: Transferir al sector de atención", "").trim();
       }
-
+      
       if (prompt.voice === "texto") {
         const sentMessage = await wbot.sendMessage(msg.key.remoteJid!, {
           text: response!
@@ -813,10 +813,11 @@ const handleOpenAi = async (
 
       let response = chat.choices[0].message?.content;
 
-      if (response?.includes("Ação: Transferir para o setor de atendimento")) {
+      if (response?.includes("Acción: Transferir al sector de atención")) {
         await transferQueue(prompt.queueId, ticket, contact);
-        response = response.replace("Ação: Transferir para o setor de atendimento", "").trim();
+        response = response.replace("Acción: Transferir al sector de atención", "").trim();
       }
+
       if (prompt.voice === "texto") {
         const sentMessage = await wbot.sendMessage(msg.key.remoteJid!, {
           text: `\u200e ${response!}`
@@ -1061,12 +1062,12 @@ const isValidMsg = (msg: proto.IWebMessageInfo): boolean => {
       msgType === "listMessage" ||
       msgType === "viewOnceMessage";
 
-    if (!ifType) {
-      logger.warn(`#### Nao achou o type em isValidMsg: ${msgType}
-${JSON.stringify(msg?.message)}`);
-      Sentry.setExtra("Mensagem", { BodyMsg: msg.message, msg, msgType });
-      Sentry.captureException(new Error("Novo Tipo de Mensagem em isValidMsg"));
-    }
+      if (!ifType) {
+        logger.warn(`#### No se encontró el tipo en isValidMsg: ${msgType}
+      ${JSON.stringify(msg?.message)}`);
+        Sentry.setExtra("Mensaje", { BodyMsg: msg.message, msg, msgType });
+        Sentry.captureException(new Error("Nuevo tipo de mensaje en isValidMsg"));
+      }
 
     return !!ifType;
   } catch (error) {
