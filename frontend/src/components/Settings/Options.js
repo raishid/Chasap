@@ -269,7 +269,7 @@ export default function Options(props) {
       key: "userRating",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingUserRating(false);
   }
 
@@ -280,7 +280,7 @@ export default function Options(props) {
       key: 'allowregister',
       value,
     });
-    toast.success('Operação atualizada com sucesso.');
+    toast.success('Operación actualizada con éxito.');
     setLoadingallowregister(false);
   }
  
@@ -292,7 +292,7 @@ export default function Options(props) {
       key: 'viewclosed',
       value,
     });
-    toast.success('Operação atualizada com sucesso.');
+    toast.success('Operación actualizada con éxito.');
     setLoadingviewclosed(false);
   }
 
@@ -303,7 +303,7 @@ export default function Options(props) {
       key: 'viewgroups',
       value,
     });
-    toast.success('Operação atualizada com sucesso.');
+    toast.success('Operación actualizada con éxito.');
     setLoadingviewgroups(false);
   }
     async function handleSendGreetingMessageOneQueues(value) {
@@ -313,7 +313,7 @@ export default function Options(props) {
       key: "sendGreetingMessageOneQueues",
       value,
     });
-	toast.success("Operação atualizada com sucesso.");
+	toast.success("Operación actualizada con éxito.");
     setLoadingSendGreetingMessageOneQueues(false);
   }
 
@@ -324,7 +324,7 @@ export default function Options(props) {
       key: 'viewregister',
       value,
     });
-    toast.success('Operação atualizada com sucesso.');
+    toast.success('Operación actualizada con éxito.');
     setLoadingviewregister(false);
   }
   
@@ -335,7 +335,7 @@ export default function Options(props) {
       key: 'trial',
       value,
     });
-    toast.success('Operação atualizada com sucesso.');
+    toast.success('Operación actualizada con éxito.');
     setLoadingtrial(false);
   }
 
@@ -348,7 +348,7 @@ export default function Options(props) {
       value,
     });
     //toast.success("Oraçãpeo atualizada com sucesso.");
-    toast.success('Operação atualizada com sucesso.', {
+    toast.success('Operación actualizada con éxito.', {
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: false,
@@ -370,7 +370,7 @@ export default function Options(props) {
       key: "call",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingCallType(false);
   }
 
@@ -381,7 +381,7 @@ export default function Options(props) {
       key: "chatBotType",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingChatbotType(false);
   }
 
@@ -392,7 +392,7 @@ export default function Options(props) {
       key: "CheckMsgIsGroup",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setCheckMsgIsGroupType(false);
     /*     if (typeof scheduleTypeChanged === "function") {
           scheduleTypeChanged(value);
@@ -407,7 +407,7 @@ export default function Options(props) {
       key: "sendGreetingAccepted",
       value,
     });
-	toast.success("Operação atualizada com sucesso.");
+	toast.success("Operación actualizada con éxito.");
     setLoadingSendGreetingAccepted(false);
   }  
   
@@ -422,7 +422,7 @@ export default function Options(props) {
       value,
     });
 
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingSettingsTransfTicket(false);
   } 
  
@@ -433,7 +433,7 @@ export default function Options(props) {
       key: "ipixc",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingIpIxcType(false);
   }
 
@@ -444,7 +444,7 @@ export default function Options(props) {
       key: "tokenixc",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingTokenIxcType(false);
   }
 
@@ -456,7 +456,7 @@ export default function Options(props) {
       key: "ipmkauth",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingIpMkauthType(false);
   }
 
@@ -467,7 +467,7 @@ export default function Options(props) {
       key: "clientidmkauth",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingClientIdMkauthType(false);
   }
 
@@ -478,7 +478,7 @@ export default function Options(props) {
       key: "clientsecretmkauth",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingClientSecrectMkauthType(false);
   }
 
@@ -489,7 +489,7 @@ export default function Options(props) {
       key: "asaas",
       value,
     });
-    toast.success("Operação atualizada com sucesso.");
+    toast.success("Operación actualizada con éxito.");
     setLoadingAsaasType(false);
   }
   return (

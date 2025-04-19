@@ -922,7 +922,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                 {message.isDeleted && (
                   <div>
                     <span className={"message-deleted"}
-                    >Essa mensagem foi apagada pelo contato &nbsp;
+                    >Este mensaje fue eliminado por el contacto &nbsp;
                       <Block
                         color="error"
                         fontSize="small"
@@ -948,7 +948,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                     <>
                       <span style={{ marginLeft: "0px", display: 'flex', alignItems: 'center' }}>
                         <MarkdownWrapper>
-                          {"_*" + (message.fromMe ? 'Você' : (message?.contact?.name ?? 'Contato')) + "*_ reaccionó... "}
+                          {"_*" + (message.fromMe ? 'Usted' : (message?.contact?.name ?? 'Contacto')) + "*_ reaccionó... "}
                         </MarkdownWrapper>
                         <Badge 
                           className={classes.badge}
@@ -1034,7 +1034,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                     <>
                       <span style={{ marginLeft: "0px", display: 'flex', alignItems: 'center' }}>
                         <MarkdownWrapper>
-                          {"_*" + (message.fromMe ? 'Você' : (message?.contact?.name ?? 'Contato')) + "*_ reaccionó... "}
+                          {"_*" + (message.fromMe ? 'Usted' : (message?.contact?.name ?? 'Contacto')) + "*_ reaccionó... "}
                         </MarkdownWrapper>
                         <Badge 
                           className={classes.badge}

@@ -533,12 +533,12 @@ export default function CompaniesManager() {
       }
       await loadPlans();
       handleCancel();
-      toast.success("Operação realizada com sucesso!");
+      toast.success("¡Operación realizada con éxito!");
     } catch (e) {
       toast.error(
-        "Não foi possível realizar a operação. Verifique se já existe uma empresa com o mesmo nome ou se os campos foram preenchidos corretamente"
+        "No fue posible realizar la operación. Verifica si ya existe una empresa con el mismo nombre o si los campos fueron completados correctamente"
       );
-    }
+    }    
     setLoading(false);
   };
 
@@ -548,10 +548,10 @@ export default function CompaniesManager() {
       await remove(record.id);
       await loadPlans();
       handleCancel();
-      toast.success("Operação realizada com sucesso!");
+      toast.success("¡Operación realizada con éxito!");
     } catch (e) {
-      toast.error("Não foi possível realizar a operação");
-    }
+      toast.error("No fue posible realizar la operación");
+    }    
     setLoading(false);
   };
 
@@ -620,7 +620,7 @@ export default function CompaniesManager() {
         onClose={() => setShowConfirmDialog(false)}
         onConfirm={() => handleDelete()}
       >
-        Deseja realmente excluir esse registro?
+        ¿Está seguro que desea eliminar este registro?
       </ConfirmationModal>
     </Paper>
   );

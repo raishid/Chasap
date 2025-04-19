@@ -1320,7 +1320,7 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
 
 
                 const body = {
-                  text: formatBody(`Localizei seu Cadastro! \n*${nome}* só mais um instante por favor!`, contact),
+                  text: formatBody(`¡He encontrado tu registro! \n*${nome}*, solo un instante más por favor.`, contact),
                 };
                 await sleep(2000)
                 await wbot.sendMessage(`${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`, body);
@@ -1349,12 +1349,12 @@ export const provider = async (ticket: Ticket, msg: proto.IWebMessageInfo, compa
                   id_contrato = response.data?.registros[0]?.id;
                   if (status_internet !== 'A') {
                     const bodyPdf = {
-                      text: formatBody(`*${nome}*  a sua conexão esta bloqueada! Vou desbloquear para você.`, contact),
+                      text: formatBody(`*${nome}*  ¡Su conexión está bloqueada! Lo desbloquearé para usted.`, contact),
                     };
                     await sleep(2000)
                     await wbot.sendMessage(`${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`, bodyPdf);
                     const bodyqrcode = {
-                      text: formatBody(`Estou liberando seu acesso. Por favor aguarde!`, contact),
+                      text: formatBody(`Estamos liberando su acceso. ¡Espere por favor!`, contact),
                     };
                     await sleep(2000)
                     await wbot.sendMessage(`${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`, bodyqrcode);

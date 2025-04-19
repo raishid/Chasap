@@ -5,12 +5,12 @@ export function register() {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
 
       navigator.serviceWorker.register(swUrl)
-        .then((registration) => {
-          console.log('Service worker registrado com sucesso!', registration);
-        })
-        .catch((error) => {
-          console.error('Erro durante o registro do service worker:', error);
-        });
+      .then((registration) => {
+        console.log('¡Service worker registrado con éxito!', registration);
+      })
+      .catch((error) => {
+        console.error('Error durante el registro del service worker:', error);
+      });
     });
   }
 }
@@ -22,7 +22,7 @@ export function unregister() {
         registration.unregister();
       })
       .catch((error) => {
-        console.error('Erro durante o desregistro do service worker:', error);
+        console.error('Error al dar de baja al service worker:', error);
       });
   }
 }

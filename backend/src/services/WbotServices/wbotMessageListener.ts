@@ -400,7 +400,7 @@ export const getBodyMessage = (msg: proto.IWebMessageInfo): string | null => {
       liveLocationMessage: `Latitude: ${msg.message?.liveLocationMessage?.degreesLatitude} - Longitude: ${msg.message?.liveLocationMessage?.degreesLongitude}`,
       documentMessage: msg.message?.documentMessage?.title,
       documentWithCaptionMessage: msg.message?.documentWithCaptionMessage?.message?.documentMessage?.caption,
-      audioMessage: "Áudio",
+      audioMessage: "Audio",
       listMessage: getBodyButton(msg) || msg.message?.listResponseMessage?.title,
       listResponseMessage: msg.message?.listResponseMessage?.singleSelectReply?.selectedRowId,
     };
@@ -412,7 +412,7 @@ export const getBodyMessage = (msg: proto.IWebMessageInfo): string | null => {
 ${JSON.stringify(msg)}`);
       Sentry.setExtra("Mensagem", { BodyMsg: msg.message, msg, type });
       Sentry.captureException(
-        new Error("Novo Tipo de Mensagem em getTypeMessage")
+        new Error("Nuevo Tipo de Mensaje en getTypeMessage")
       );
     }
     return types[type];
@@ -500,7 +500,7 @@ const downloadMedia = async (msg: proto.IWebMessageInfo) => {
   } catch (err) {
 
 
-    console.error('Erro ao baixar mídia:', err);
+    console.error('Error al descargar medios:', err);
 
     // Trate o erro de acordo com as suas necessidades
   }

@@ -7,19 +7,25 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const { email } = req.params as IndexQuery;
   const TokenSenha = uuid();
   const forgotPassword = await SendMail(email, TokenSenha);
+  
   if (!forgotPassword) {
-     return res.status(200).json({ message: "E-mail enviado com sucesso" });
+    return res.status(200).json({ message: "Correo enviado con éxito" });
   }
-  return res.status(404).json({ error: "E-mail enviado com sucesso" });
+
+  return res.status(404).json({ error: "Correo enviado con éxito" });
 };
+
 export const resetPasswords = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { email, token, password } = req.params as IndexQuery;
   const resetPassword = await ResetPassword(email, token, password);
+
   if (!resetPassword) {
-    return res.status(200).json({ message: "Senha redefinida com sucesso" });
+    return res.status(200).json({ message: "Contraseña restablecida con éxito" });
   }
-  return res.status(404).json({ error: "Verifique o Token informado" });
+
+  return res.status(404).json({ error: "Verifica el token proporcionado" });
 };
+
