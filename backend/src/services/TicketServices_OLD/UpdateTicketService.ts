@@ -130,8 +130,8 @@ const UpdateTicketService = async ({
           const ratingTxt = ratingMessage || "";
           let bodyRatingMessage = `\u200e${ratingTxt}\n\n`;
           bodyRatingMessage +=
-            "Digite de 1 à 3 para qualificar nosso atendimento:\n*1* - _Insatisfeito_\n*2* - _Satisfeito_\n*3* - _Muito Satisfeito_\n\n";
-          await SendWhatsAppMessage({ body: bodyRatingMessage, ticket });
+          "Escriba del 1 al 3 para calificar nuestro servicio:\n*1* - _Insatisfecho_\n*2* - _Satisfecho_\n*3* - _Muy Satisfecho_\n\n";
+          await SendWhatsAppMessage({ body: bodyRatingMessage, ticket }); 
     
           // Atualiza o rastreamento para indicar que a avaliação foi solicitada
           await ticketTraking.update({
