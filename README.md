@@ -11,6 +11,11 @@
 - **Reportes y Estadísticas:** Monitoreo del rendimiento de los agentes y el volumen de conversaciones.  
 - **Seguridad:** Protección de datos con encriptación y acceso controlado por roles.  
 
+## 🤝 GRUPO DE SOPORTE
+
+Únete a nuestro grupo de WhatsApp para resolver dudas y compartir experiencias con otros usuarios de Chasap:
+- https://chat.whatsapp.com/JNiua2aMp3NDa5cF5Zw5Se
+
 ## 🛠 INSTALACIÓN
 ### VIDEO INSTALACIÓN WINDOWS: https://www.youtube.com/watch?v=0NMyzdb_SPQ
 ### VIDEO INSTALACIÓN LINUX:
@@ -74,10 +79,6 @@ Si deseas contribuir a **Chasap**, puedes hacer un **fork** del proyecto y envia
 Agradecemos a todos los colaboradores y usuarios que han apoyado el desarrollo de Chasap. Su retroalimentación y contribuciones han sido clave para mejorar esta herramienta.
 - Calendario (Traducción) : BJAR
   
-## 🤝 GRUPO DE SOPORTE
-
-Únete a nuestro grupo de WhatsApp para resolver dudas y compartir experiencias con otros usuarios de Chasap:
-- https://chat.whatsapp.com/HR9PZZLqsRHAP8ZA8s0H5G
 
 ## ⚖️ LICENCIA
 
