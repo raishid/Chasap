@@ -68,6 +68,12 @@
 
 Si deseas contribuir a **Chasap**, puedes hacer un **fork** del proyecto y enviar un **pull request** con mejoras o correcciones.
 
+## ❤️ DONACIÓN
+
+### Quieres comprar un café para no quedarme dormido y seguir programando!!. puedes hacerlo <3
+### ☕ https://buymeacoffee.com/chasap
+
+
 ## 👤 AUTOR
 
 **Luis Cárdenas**  
