@@ -614,7 +614,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
           }
         }
         // console.log(message)
-        return
+        return <VCardPreview contact={contact} numbers={obj[0].number} />
       } else
   
         if (message.mediaType === "image") {
