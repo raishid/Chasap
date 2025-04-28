@@ -412,8 +412,8 @@ const messages = {
       tickets: {
         inbox: {
           closedalltickets: "¿Cerrar todos los tickets?",
-          closedall: "Cerrar Todos",
-          newticket: "Nuevo Ticket",
+          closedAll: "Cerrar Todos",
+          newTicket: "Nuevo Ticket",
           yes: "si",
           no: "no",
           open: "Abiertos",
@@ -431,16 +431,16 @@ const messages = {
           search: { title: "Búsqueda" }
         },
         search: {
-          placeholder: "Buscar atención y mensajes",
-          filterconnections: "Filtro por conexiones",
-          filtercontacts: "Filtro por contacto",
-          filterconections: "Filtro por Conexión",
-          filterconectionsoptions: {
+          placeHolder: "Buscar atención y mensajes",
+          filterConnections: "Filtro por conexiones",
+          filterContacts: "Filtro por contacto",
+          filterConections: "Filtro por Conexión",
+          filterConectionsOptions: {
             open: "Abierto",
             closed: "Cerrado",
             pending: "Pendiente"
           },
-          filterusers: "Filtro por Usuarios",
+          filterUsers: "Filtro por Usuarios",
           ticketsperpage: "Tickets por página"
         },
         buttons: {
