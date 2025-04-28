@@ -18,7 +18,7 @@ import {
   Button,
   Tooltip
 } from "@material-ui/core";
-import { MoreVert, Archive, Delete } from "@material-ui/icons";
+import { MoreVert, Archive } from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -84,7 +84,7 @@ const Kanban = () => {
   const classes = useStyles();
   const { user } = useContext(AuthContext);
   const jsonString = user.queues.map(queue => queue.UserQueue.queueId);
-  
+
   const [tags, setTags] = useState([]);
   const [tickets, setTickets] = useState([]);
   const [laneQuantities, setLaneQuantities] = useState({});
@@ -144,13 +144,8 @@ const Kanban = () => {
   const confirmAction = async () => {
     try {
       if (actionType === 'archive') {
-        // Remove todas as tags sem deletar o ticket
         await api.delete(`/ticket-tags/${selectedTicket.id}`);
         toast.success('Ticket archivado con éxito');
-      } else if (actionType === 'delete') {
-        // Aqui você pode implementar a lógica para deletar se necessário
-        // await api.delete(`/tickets/${selectedTicket.id}`);
-        toast.error('Función de eliminar desactivada para proteger las conversaciones');
       }
       
       fetchTickets();
@@ -242,28 +237,56 @@ const Kanban = () => {
     setFile({ lanes });
   }, [tags, tickets, laneQuantities]);
 
-  const handleCardMove = async (sourceLaneId, targetLaneId, cardId) => {
+  const handleCardMove = async (sourceLaneId, targetLaneId, cardId, index, card) => {
     try {
-      await api.delete(`/ticket-tags/${cardId}`);
-      if (targetLaneId !== "0") {
-        await api.put(`/ticket-tags/${cardId}/${targetLaneId}`);
+      if (sourceLaneId !== targetLaneId) {
+        await api.delete(`/ticket-tags/${cardId}`);
+        if (targetLaneId !== "0") {
+          await api.put(`/ticket-tags/${cardId}/${targetLaneId}`);
+        }
+        toast.success('Ticket movido con éxito');
       }
-      toast.success('Ticket movido con éxito');
-      
-      fetchTickets();
-      fetchTags();
+
+      setFile(prevFile => {
+        let movingCard = null;
+        const newLanes = prevFile.lanes.map(lane => {
+          if (lane.id === sourceLaneId) {
+            const newCards = lane.cards.filter(c => {
+              if (c.id === cardId) {
+                movingCard = c;
+                return false;
+              }
+              return true;
+            });
+            return { ...lane, cards: newCards };
+          }
+          return lane;
+        }).map(lane => {
+          if (lane.id === targetLaneId && movingCard) {
+            const newCards = [...lane.cards];
+            newCards.splice(index, 0, movingCard);
+            return { ...lane, cards: newCards };
+          }
+          return lane;
+        });
+
+        return { lanes: newLanes };
+      });
+
     } catch (err) {
       console.log(err);
       toast.error('Error al mover el ticket');
     }
-  };  
+  };
 
   return (
     <div className={classes.root}>
       <div className={classes.boardContainer}>
         <Board 
           data={file} 
-          onCardMoveAcrossLanes={handleCardMove}
+          onCardMoveAcrossLanes={(fromLaneId, toLaneId, cardId, index, card) => 
+            handleCardMove(fromLaneId, toLaneId, cardId, index, card)
+          }
           laneStyle={{ 
             maxHeight: "80vh",
             minWidth: "280px",
@@ -285,7 +308,7 @@ const Kanban = () => {
         />
       </div>
 
-      {/* Menu de ações */}
+      {/* Menu de acciones */}
       <Menu
         anchorEl={anchorEl}
         keepMounted
@@ -298,17 +321,17 @@ const Kanban = () => {
         </MenuItem>
       </Menu>
 
-      {/* Dialog de confirmação */}
+      {/* Diálogo de confirmación */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>
           {actionType === 'archive' ? 'Desvincular Ticket' : 'Borrar Ticket'}
         </DialogTitle>
         <DialogContent>
-        {actionType === 'archive' ? (
-          <p>¿Estás seguro de que deseas desvincular este ticket de todas las etiquetas kanban? El chat permanecerá intacto.</p>
-        ) : (
-          <p>Atención: Esta acción es irreversible. Todos los mensajes se perderán.</p>
-        )}
+          {actionType === 'archive' ? (
+            <p>¿Estás seguro de que deseas desvincular este ticket de todas las etiquetas kanban? El chat permanecerá intacto.</p>
+          ) : (
+            <p>Atención: Esta acción es irreversible. Todos los mensajes se perderán.</p>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
