@@ -373,7 +373,7 @@ export function PlansManagerGrid(props) {
     };
 
     const renderInternal = (row) => {
-        return row.useInternal === false ? "Si" : "No";
+        return row.useInternal === false ? "Sim" : "Não";
     };
 
     return (
@@ -468,7 +468,7 @@ export default function PlansManager() {
             const planList = await list()
             setRecords(planList)
         } catch (e) {
-            toast.error('Não foi possível carregar a lista de registros')
+            toast.error('No fue posible cargar la lista de registros');
         }
         setLoading(false)
     }
@@ -484,9 +484,9 @@ export default function PlansManager() {
             }
             await loadPlans()
             handleCancel()
-            toast.success('¡Operación realizada con éxito!');
+            toast.success('¡Operación realizada con éxito!')
         } catch (e) {
-          toast.error('No fue posible realizar la operación. Verifica si ya existe un plan con el mismo nombre o si los campos fueron completados correctamente');
+            toast.error('No fue posible realizar la operación. Verifique si ya existe un plan con el mismo nombre o si los campos fueron completados correctamente')
         }        
         setLoading(false)
     }
@@ -497,10 +497,10 @@ export default function PlansManager() {
             await remove(record.id)
             await loadPlans()
             handleCancel()
-            toast.success('¡Operación realizada con éxito!');
+            toast.success('¡Operación realizada con éxito!')
         } catch (e) {
-          toast.error('No fue posible realizar la operación');
-        }
+            toast.error('No fue posible realizar la operación')
+        }        
         setLoading(false)
     }
 
@@ -581,7 +581,7 @@ export default function PlansManager() {
                 onClose={() => setShowConfirmDialog(false)}
                 onConfirm={() => handleDelete()}
             >
-               ¿Está seguro que desea eliminar este registro?
+                Deseja realmente excluir esse registro?
             </ConfirmationModal>
         </Paper>
     )

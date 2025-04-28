@@ -4,8 +4,10 @@ import AppError from "../../errors/AppError";
 import GetTicketWbot from "../../helpers/GetTicketWbot";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
-
+import { logger } from "../../utils/logger";
 import formatBody from "../../helpers/Mustache";
+
+import Queue from "bull";
 import { map_msg } from "../../utils/global";
 
 interface Request {
@@ -25,7 +27,7 @@ const SendWhatsAppMessage = async ({
   const wbot = await GetTicketWbot(ticket);
   const number = `${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"
     }`;
-  console.log("number", number);
+    console.log("🔢 NÚMERO", number);
   if (quotedMsg) {
     const chatMessages = await Message.findOne({
       where: {
@@ -48,6 +50,24 @@ const SendWhatsAppMessage = async ({
 
   }
 
+  const connection = process.env.REDIS_URI || "";
+
+  const sendScheduledMessagesWbot = new Queue(
+    "SendWbotMessages",
+    connection
+  );
+
+  const messageData = {
+    wbotId: wbot.id,
+  number: number,
+  text: formatBody(body, ticket.contact),
+  options: { ...options }
+};
+
+
+  const sentMessage = sendScheduledMessagesWbot.add("SendMessageWbot", { messageData }, { delay: 500 });
+  logger.info("Mensagem enviada via REDIS...");
+
   try {
     console.log('body:::::::::::::::::::::::::::', body)
     map_msg.set(ticket.contact.number, { lastSystemMsg: body })
@@ -61,7 +81,7 @@ const SendWhatsAppMessage = async ({
       }
     );
     await ticket.update({ lastMessage: formatBody(body, ticket.contact) });
-    //console.log("Message sent", sentMessage);
+    console.log("📤 MENSAJE ENVIADO", sentMessage);
     return sentMessage;
   } catch (err) {
     Sentry.captureException(err);

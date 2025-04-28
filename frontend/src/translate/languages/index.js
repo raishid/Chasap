@@ -4,8 +4,8 @@ import { messages as spanishMessages } from "./es";
 
 const messages = {
 	...portugueseMessages,
-	...spanishMessages,
 	...englishMessages,
+	...spanishMessages,
 };
 
 export { messages };

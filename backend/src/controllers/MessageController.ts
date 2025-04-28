@@ -9,7 +9,9 @@ import Message from "../models/Message";
 import Queue from "../models/Queue";
 import User from "../models/User";
 import Whatsapp from "../models/Whatsapp";
+import { lookup } from 'mime-types';
 import { isNil } from "lodash";
+import QuickMessage from "../models/QuickMessage";
 import CreateOrUpdateContactService from "../services/ContactServices/CreateOrUpdateContactService";
 import SendWhatsAppReaction from "../services/WbotServices/SendWhatsAppReaction";
 import ListMessagesService from "../services/MessageServices/ListMessagesService";
@@ -21,6 +23,7 @@ import DeleteWhatsAppMessage from "../services/WbotServices/DeleteWhatsAppMessag
 import GetProfilePicUrl from "../services/WbotServices/GetProfilePicUrl";
 import ShowContactService from "../services/ContactServices/ShowContactService";
 import SendWhatsAppMedia from "../services/WbotServices/SendWhatsAppMedia";
+//import SendWhatsAppMediaInternal from "../services/WbotServices/SendWhatsAppMediaInternal";
 import path from "path";
 import SendWhatsAppMessage from "../services/WbotServices/SendWhatsAppMessage";
 import EditWhatsAppMessage from "../services/WbotServices/EditWhatsAppMessage";
@@ -75,7 +78,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
   SetTicketMessagesAsRead(ticket);
 
-  console.log('body:::::', body)
+  console.log('📄 CUERPO DE LA SOLICITUD:', body);
   if (medias) {
     await Promise.all(
       medias.map(async (media: Express.Multer.File, index) => {
@@ -112,19 +115,19 @@ export const send = async (req: Request, res: Response): Promise<Response> => {
   const messageData: MessageData = req.body;
   const medias = req.files as Express.Multer.File[];
 
-  console.log('messageData;', messageData)
+  console.log('📩 DATOS DEL MENSAJE:', messageData);
 
   try {
     const whatsapp = await Whatsapp.findByPk(whatsappId);
 
     if (!whatsapp) {
-      throw new Error("No fue posible realizar la operación");
+      throw new Error("Não foi possível realizar a operação");
     }
-    
+
     if (messageData.number === undefined) {
-      throw new Error("El número es obligatorio");
+      throw new Error("O número é obrigatório");
     }
-    
+
     const numberToTest = messageData.number;
     const body = messageData.body;
 
@@ -187,11 +190,11 @@ export const send = async (req: Request, res: Response): Promise<Response> => {
     
     SetTicketMessagesAsRead(ticket);
 
-    return res.send({ mensaje: "Mensaje enviado" });
+    return res.send({ mensagem: "Mensagem enviada" });
   } catch (err: any) {
     if (Object.keys(err).length === 0) {
       throw new AppError(
-        "No fue posible enviar el mensaje, intenta nuevamente en unos instantes"
+        "Não foi possível enviar a mensagem, tente novamente em alguns instantes"
       );
     } else {
       throw new AppError(err.message);
@@ -212,7 +215,7 @@ export const addReaction = async (req: Request, res: Response): Promise<Response
     });
 
     if (!message) {
-      return res.status(404).send({message: "Mensaje no encontrado"});
+      return res.status(404).send({message: "Mensagem não encontrada"});
     }
 
     // Envia a reação via WhatsApp
@@ -234,17 +237,17 @@ export const addReaction = async (req: Request, res: Response): Promise<Response
     });
 
     return res.status(200).send({
-      message: '¡Reacción añadida con éxito!',
+      message: 'Reação adicionada com sucesso!',
       reactionResult,
       reactions: updatedMessage.reactions
     });
-    } catch (error) {
-      console.error('Error al añadir reacción:', error);
-      if (error instanceof AppError) {
-        return res.status(400).send({ message: error.message });
-      }
-      return res.status(500).send({ message: 'Error al añadir reacción', error: error.message });
+  } catch (error) {
+    console.error('Erro ao adicionar reação:', error);
+    if (error instanceof AppError) {
+      return res.status(400).send({message: error.message});
     }
+    return res.status(500).send({message: 'Erro ao adicionar reação', error: error.message});
+  }
 };
 
 function obterNomeEExtensaoDoArquivo(url) {
@@ -269,23 +272,21 @@ export const forwardMessage = async (
   const requestUser = await User.findByPk(userId);
 
   if (!messageId || !contactId) {
-    return res.status(200).send("No se encontró MessageId o ContactId");
+    return res.status(200).send("MessageId or ContactId not found");
   }
-  
   const message = await ShowMessageService(messageId);
   const contact = await ShowContactService(contactId, companyId);
-  
+
   if (!message) {
-    return res.status(404).send("Mensaje no encontrado");
+    return res.status(404).send("Message not found");
   }
-  
   if (!contact) {
-    return res.status(404).send("Contacto no encontrado");
+    return res.status(404).send("Contact not found");
   }
-  
+
   const whatsAppConnectionId = await GetWhatsAppFromMessage(message);
   if (!whatsAppConnectionId) {
-    return res.status(404).send("No se encontró el WhatsApp del mensaje");
+    return res.status(404).send('Whatsapp from message not found');
   }
 
   const ticket = await ShowTicketService(message.ticketId, message.companyId);
@@ -333,7 +334,7 @@ export const forwardMessage = async (
 
     const publicFolder = path.join(__dirname, '..', '..', '..', 'backend', 'public');
 
-    const filePath = path.join(publicFolder, fileName);
+    const filePath = path.join(publicFolder, `company${createTicket.companyId}`, fileName)
 
     const mediaSrc = {
       fieldname: 'medias',
@@ -354,7 +355,7 @@ export const edit = async (req: Request, res: Response): Promise<Response> => {
   const { messageId } = req.params;
   const { companyId } = req.user;
   const { body }: MessageData = req.body;
-  console.log(body)
+  console.log("📄 CUERPO:", body);
   const { ticket , message } = await EditWhatsAppMessage({messageId, body});
 
   const io = getIO();

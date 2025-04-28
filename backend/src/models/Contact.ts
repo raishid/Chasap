@@ -47,6 +47,16 @@ class Contact extends Model<Contact> {
   @Column
   isGroup: boolean;
 
+  @AllowNull(true)
+  @Default(null)
+  @Column
+  messengerId?: string;
+
+  @AllowNull(true)
+  @Default(null)
+  @Column
+  instagramId?: string;
+
   @CreatedAt
   createdAt: Date;
 
@@ -69,7 +79,7 @@ class Contact extends Model<Contact> {
 
   @Default(false)
   @Column
-  disableBot: boolean
+  disableBot: boolean;
 
   @BelongsTo(() => Company)
   company: Company;

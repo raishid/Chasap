@@ -20,7 +20,7 @@ import whatsBackgroundDark from "../../assets/wa-background-dark.png"
 const useStyles = makeStyles((theme) => ({
   messagesList: {
     backgroundSize: "370px",
-    backgroundImage: theme.mode === 'light' ? `url(${whatsBackground})` : `url(${whatsBackgroundDark})`, //DARK MODE PLW DESIGN//
+    backgroundImage: theme.mode === 'light' ? `url(${whatsBackground})` : `url(${whatsBackgroundDark})`, //DARK MODE Whaticket SaaS//
     display: "flex",
     display: "flex",
     justifyContent: "center",
@@ -182,7 +182,7 @@ const EditMessageModal = ({ open, onClose, onSave, message }) => {
        <IconButton edge="start" color="inherit" onClick={() => onClose(false)} aria-label="close">
           <CloseIcon />
         </IconButton>
-        Editar Mensaje
+         Editar Mensaje
         </DialogTitle>
       <DialogContent style={{ padding: "0px"}}>
         <Box>

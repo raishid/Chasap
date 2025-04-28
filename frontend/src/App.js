@@ -64,6 +64,7 @@ const App = () => {
                 dark: { main: mode === "light" ? "#333333" : "#F3F3F3" },
                 light: { main: mode === "light" ? "#F3F3F3" : "#333333" },
                 tabHeaderBackground: mode === "light" ? "#EEE" : "#666",
+                ticketlist: mode === "light" ? "#fafafa" : "#333",
                 optionsBackground: mode === "light" ? "#fafafa" : "#333",
 				options: mode === "light" ? "#fafafa" : "#666",
 				fontecor: mode === "light" ? "#128c7e" : "#fff",
@@ -85,6 +86,7 @@ const App = () => {
 				boxticket: mode === "light" ? "#EEE" : "#666",
 				campaigntab: mode === "light" ? "#ededed" : "#666",
 				mediainput: mode === "light" ? "#ededed" : "#1c1c1c",
+				contadordash: mode == "light" ? "#fff" : "#fff",
             },
             mode,
         },
@@ -96,7 +98,7 @@ const App = () => {
         const browserLocale =
             i18nlocale.substring(0, 2) + i18nlocale.substring(3, 5);
 
-        if (browserLocale === "esES") {
+       if (browserLocale === "esES") {
             setLocale(esES);
         }
     }, []);

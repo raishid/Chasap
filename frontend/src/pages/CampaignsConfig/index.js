@@ -109,7 +109,7 @@ const CampaignsConfig = () => {
 
   const saveSettings = async () => {
     await api.post("/campaign-settings", { settings });
-    toast.success("Configurações salvas");
+    toast.success("Configuraciones Guardadas");
   };
 
   return (
@@ -142,7 +142,7 @@ const CampaignsConfig = () => {
                 fullWidth
               >
                 <InputLabel id="messageInterval-label">
-                  Intervalo de activación aleatorio
+                  Intervalo Randômico de Disparo
                 </InputLabel>
                 <Select
                   name="messageInterval"
@@ -152,7 +152,7 @@ const CampaignsConfig = () => {
                   value={settings.messageInterval}
                   onChange={(e) => handleOnChangeSettings(e)}
                 >
-                  <MenuItem value={0}>Sin descanso</MenuItem>
+                  <MenuItem value={0}>Sem Intervalo</MenuItem>
                   <MenuItem value={5}>5 segundos</MenuItem>
                   <MenuItem value={10}>10 segundos</MenuItem>
                   <MenuItem value={15}>15 segundos</MenuItem>
@@ -167,7 +167,7 @@ const CampaignsConfig = () => {
                 fullWidth
               >
                 <InputLabel id="longerIntervalAfter-label">
-                  Intervalo mayor después
+                  Intervalo Maior Após
                 </InputLabel>
                 <Select
                   name="longerIntervalAfter"
@@ -177,7 +177,7 @@ const CampaignsConfig = () => {
                   value={settings.longerIntervalAfter}
                   onChange={(e) => handleOnChangeSettings(e)}
                 >
-                  <MenuItem value={0}>No definido</MenuItem>
+                  <MenuItem value={0}>Não definido</MenuItem>
                   <MenuItem value={1}>1 segundo</MenuItem>
                   <MenuItem value={5}>5 segundos</MenuItem>
                   <MenuItem value={10}>10 segundos</MenuItem>
@@ -199,7 +199,7 @@ const CampaignsConfig = () => {
                 fullWidth
               >
                 <InputLabel id="greaterInterval-label">
-                  Intervalo de disparo mayor
+                  Intervalo de Disparo Maior
                 </InputLabel>
                 <Select
                   name="greaterInterval"
@@ -209,7 +209,7 @@ const CampaignsConfig = () => {
                   value={settings.greaterInterval}
                   onChange={(e) => handleOnChangeSettings(e)}
                 >
-                  <MenuItem value={0}>Sin descanso</MenuItem>
+                  <MenuItem value={0}>Sem Intervalo</MenuItem>
                   <MenuItem value={1}>1 segundo</MenuItem>
                   <MenuItem value={5}>5 segundos</MenuItem>
                   <MenuItem value={10}>10 segundos</MenuItem>
@@ -230,14 +230,14 @@ const CampaignsConfig = () => {
                 color="primary"
                 style={{ marginRight: 10 }}
               >
-               Agregar variable
+                Adicionar Variável
               </Button>
               <Button
                 onClick={saveSettings}
                 color="primary"
                 variant="contained"
               >
-                Salvar Configuraciones
+                Guardar Configuraciones
               </Button>
             </Grid>
             {showVariablesForm && (

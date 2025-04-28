@@ -113,7 +113,7 @@ const Announcements = () => {
   useEffect(() => {
     async function fetchData() {
       if (!user.super) {
-        toast.error("Esta empresa não possui permissão para acessar essa página! Estamos lhe redirecionando.");
+        toast.error("¡Esta empresa no tiene permiso para acceder a esta página! Te estamos redirigiendo.");
         setTimeout(() => {
           history.push(`/`)
         }, 1000);
@@ -219,10 +219,10 @@ const Announcements = () => {
       return "Alta";
     }
     if (val === 2) {
-      return "Media";
+      return "Média";
     }
     if (val === 3) {
-      return "Baja";
+      return "Baixa";
     }
   };
 

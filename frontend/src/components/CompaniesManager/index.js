@@ -76,12 +76,13 @@ export function CompanyForm(props) {
   const [firstUser, setFirstUser] = useState({});
 
   const [record, setRecord] = useState({
+	id: "",
     name: "",
     email: "",
     phone: "",
     planId: "",
     status: true,
-    campaignsEnabled: false,
+    //campaignsEnabled: false,
     dueDate: "",
     recurrence: "",
     ...initialValue,
@@ -266,22 +267,22 @@ export function CompanyForm(props) {
                   </Field>
                 </FormControl>
               </Grid>
-              <Grid xs={12} sm={6} md={2} item>
+              {/*<Grid xs={12} sm={6} md={2} item>
                 <FormControl margin="dense" variant="outlined" fullWidth>
-                  <InputLabel htmlFor="status-selection">Campañas</InputLabel>
+                  <InputLabel htmlFor="status-selection">Campanhas</InputLabel>
                   <Field
                     as={Select}
                     id="campaigns-selection"
-                    label="Campañas"
+                    label="Campanhas"
                     labelId="campaigns-selection-label"
                     name="campaignsEnabled"
                     margin="dense"
                   >
-                    <MenuItem value={true}>Si</MenuItem>
-                    <MenuItem value={false}>No</MenuItem>
+                    <MenuItem value={true}>Habilitadas</MenuItem>
+                    <MenuItem value={false}>Desabilitadas</MenuItem>
                   </Field>
                 </FormControl>
-              </Grid>
+              </Grid>*/}
               <Grid xs={12} sm={6} md={2} item>
                 <FormControl variant="outlined" fullWidth>
                   <Field
@@ -301,7 +302,7 @@ export function CompanyForm(props) {
               <Grid xs={12} sm={6} md={2} item>
                 <FormControl margin="dense" variant="outlined" fullWidth>
                   <InputLabel htmlFor="recorrencia-selection">
-                    Repetición
+                   Repetición
                   </InputLabel>
                   <Field
                     as={Select}
@@ -407,7 +408,7 @@ export function CompaniesManagerGrid(props) {
     return row.planId !== null ? row.plan.name : "-";
   };
 
-  const renderCampaignsStatus = (row) => {
+  {/*const renderCampaignsStatus = (row) => {
     if (
       has(row, "settings") &&
       isArray(row.settings) &&
@@ -415,11 +416,11 @@ export function CompaniesManagerGrid(props) {
     ) {
       const setting = row.settings.find((s) => s.key === "campaignsEnabled");
       if (setting) {
-        return setting.value === "true" ? "Habilitadas" : "Desactivadas";
+        return setting.value === "true" ? "Habilitadas" : "Desabilitadas";
       }
     }
-    return "Desactivadas";
-  };
+    return "Desabilitadas";
+  };*/}
 
   const rowStyle = (record) => {
     if (moment(record.dueDate).isValid()) {
@@ -451,11 +452,12 @@ export function CompaniesManagerGrid(props) {
             <TableCell align="center" style={{ width: "1%" }}>
               #
             </TableCell>
+			      <TableCell align="left">ID</TableCell>
             <TableCell align="left">Nombre</TableCell>
             <TableCell align="left">E-mail</TableCell>
             <TableCell align="left">Teléfono</TableCell>
             <TableCell align="left">Plan</TableCell>
-            <TableCell align="left">Campañas</TableCell>
+           {/*  <TableCell align="left">Campañas</TableCell> */}
             <TableCell align="left">Status</TableCell>
             <TableCell align="left">Creada</TableCell>
             <TableCell align="left">Vencimento</TableCell>
@@ -469,11 +471,12 @@ export function CompaniesManagerGrid(props) {
                   <EditIcon />
                 </IconButton>
               </TableCell>
+			  <TableCell align="left">{row.id || "-"}</TableCell>
               <TableCell align="left">{row.name || "-"}</TableCell>
               <TableCell align="left">{row.email || "-"}</TableCell>
               <TableCell align="left">{row.phone || "-"}</TableCell>
               <TableCell align="left">{renderPlan(row)}</TableCell>
-              <TableCell align="left">{renderCampaignsStatus(row)}</TableCell>
+			{/*<TableCell align="left">{renderCampaignsStatus(row)}</TableCell>*/}
               <TableCell align="left">{renderStatus(row)}</TableCell>
               <TableCell align="left">{dateToClient(row.createdAt)}</TableCell>
               <TableCell align="left">
@@ -497,12 +500,13 @@ export default function CompaniesManager() {
   const [loading, setLoading] = useState(false);
   const [records, setRecords] = useState([]);
   const [record, setRecord] = useState({
+	  id: "",  
     name: "",
     email: "",
     phone: "",
     planId: "",
     status: true,
-    campaignsEnabled: false,
+    //campaignsEnabled: false,
     dueDate: "",
     recurrence: "",
   });
@@ -518,7 +522,7 @@ export default function CompaniesManager() {
       const companyList = await list();
       setRecords(companyList);
     } catch (e) {
-      toast.error("Não foi possível carregar a lista de registros");
+      toast.error("NO SE PUDO CARGAR LA LISTA DE REGISTROS");
     }
     setLoading(false);
   };
@@ -538,7 +542,7 @@ export default function CompaniesManager() {
       toast.error(
         "No fue posible realizar la operación. Verifica si ya existe una empresa con el mismo nombre o si los campos fueron completados correctamente"
       );
-    }    
+    }   
     setLoading(false);
   };
 
@@ -551,7 +555,7 @@ export default function CompaniesManager() {
       toast.success("¡Operación realizada con éxito!");
     } catch (e) {
       toast.error("No fue posible realizar la operación");
-    }    
+    }  
     setLoading(false);
   };
 
@@ -562,27 +566,28 @@ export default function CompaniesManager() {
   const handleCancel = () => {
     setRecord((prev) => ({
       ...prev,
+	    id: "",
       name: "",
       email: "",
       phone: "",
       planId: "",
       status: true,
-      campaignsEnabled: false,
+      //campaignsEnabled: false,
       dueDate: "",
       recurrence: "",
     }));
   };
 
   const handleSelect = (data) => {
-    let campaignsEnabled = false;
+//    let campaignsEnabled = false;
 
-    const setting = data.settings.find(
-      (s) => s.key.indexOf("campaignsEnabled") > -1
-    );
-    if (setting) {
-      campaignsEnabled =
-        setting.value === "true" || setting.value === "enabled";
-    }
+//    const setting = data.settings.find(
+//      (s) => s.key.indexOf("campaignsEnabled") > -1
+//    );
+//    if (setting) {
+//      campaignsEnabled =
+//       setting.value === "true" || setting.value === "enabled";
+//    }
 
     setRecord((prev) => ({
       ...prev,
@@ -592,7 +597,7 @@ export default function CompaniesManager() {
       email: data.email || "",
       planId: data.planId || "",
       status: data.status === false ? false : true,
-      campaignsEnabled,
+      //campaignsEnabled,
       dueDate: data.dueDate || "",
       recurrence: data.recurrence || "",
     }));
@@ -620,7 +625,7 @@ export default function CompaniesManager() {
         onClose={() => setShowConfirmDialog(false)}
         onConfirm={() => handleDelete()}
       >
-        ¿Está seguro que desea eliminar este registro?
+       ¿Está seguro que desea eliminar este registro?
       </ConfirmationModal>
     </Paper>
   );

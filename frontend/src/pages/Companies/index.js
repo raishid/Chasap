@@ -138,7 +138,7 @@ const SignUp = () => {
 										variant="outlined"
 										fullWidth
 										id="name"
-										label="Nombre de Empresa"
+										label="Nome da Empresa"
 									/>
 								</Grid>
 
@@ -175,7 +175,7 @@ const SignUp = () => {
 											{...field}
 											variant="outlined"
 											fullWidth
-											label="CELULAR"
+											label="DDD988888888"
 											inputProps={{ maxLength: 11 }} // Definindo o limite de caracteres
 										/>
 									)}
@@ -197,7 +197,7 @@ const SignUp = () => {
 									/>
 								</Grid>
 								<Grid item xs={12}>
-									<InputLabel htmlFor="plan-selection">Plan</InputLabel>
+									<InputLabel htmlFor="plan-selection">Plano</InputLabel>
 									<Field
 										as={Select}
 										variant="outlined"
@@ -209,7 +209,7 @@ const SignUp = () => {
 									>
 										{plans.map((plan, key) => (
 											<MenuItem key={key} value={plan.id}>
-												{plan.name} - Asistentes: {plan.users} - WhatsApp: {plan.connections} - Filas: {plan.queues} - $ {plan.value}
+												{plan.name} - Atendentes: {plan.users} - WhatsApp: {plan.connections} - Filas: {plan.queues} - R$ {plan.value}
 											</MenuItem>
 										))}
 									</Field>

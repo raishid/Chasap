@@ -178,7 +178,7 @@ const CampaignReport = () => {
               <Grid xs={12} md={4} item>
                 <CardCounter
                   icon={<DoneIcon fontSize="inherit" />}
-                  title="Confirmações Solicitadas"
+                  title="Confirmaciones Solicitadas"
                   value={confirmationRequested}
                   loading={loading}
                 />
@@ -186,7 +186,7 @@ const CampaignReport = () => {
               <Grid xs={12} md={4} item>
                 <CardCounter
                   icon={<DoneAllIcon fontSize="inherit" />}
-                  title="Confirmações"
+                  title="Confirmaciones"
                   value={confirmed}
                   loading={loading}
                 />

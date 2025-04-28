@@ -11,6 +11,8 @@ import DashboardOutlinedIcon from "@material-ui/icons/DashboardOutlined";
 import WhatsAppIcon from "@material-ui/icons/WhatsApp";
 import SyncAltIcon from "@material-ui/icons/SyncAlt";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
+import AutorenewIcon from '@material-ui/icons/Autorenew';
+import SearchIcon from '@material-ui/icons/Search';
 import PeopleAltOutlinedIcon from "@material-ui/icons/PeopleAltOutlined";
 import ContactPhoneOutlinedIcon from "@material-ui/icons/ContactPhoneOutlined";
 import AccountTreeOutlinedIcon from "@material-ui/icons/AccountTreeOutlined";
@@ -45,7 +47,7 @@ import { AllInclusive, AttachFile, BlurCircular, Description, DeviceHubOutlined,
 import usePlans from "../hooks/usePlans";
 import Typography from "@material-ui/core/Typography";
 import useVersion from "../hooks/useVersion";
-import { FcAbout } from "react-icons/fc";
+import LogLauncher from "../pages/LogLauncher";
 import { TbMessageCircleBolt, TbBrandWhatsapp, TbChartTreemap, TbPencilStar, TbAddressBook, TbClockEdit,  TbMessageChatbot, 
   TbHelpSquareRounded, TbLayoutDashboard, TbFileSettings, TbNews, TbPasswordUser, TbLogout } from "react-icons/tb";
 
@@ -59,14 +61,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 10,
     marginTop: 10,
     backgroundColor: theme.palette.sair.main,
-    color: theme.palette.text.sair,
+    color: "white",
     "&:hover": {
       backgroundColor: theme.palette.sair
         ? theme.palette.sair.dark || "#b71c1c" // Un tono más oscuro si está definido
         : theme.palette.primary.dark,
     },
-	}
-  
+	},
 }));
 
 
@@ -321,7 +322,7 @@ const MainListItems = (props) => {
             </ListSubheader>
             <>
 
-              <ListItemLink
+            <ListItemLink
                 to="/tickets"
                 primary={i18n.t("mainDrawer.listItems.tickets")}
                 icon={<TbBrandWhatsapp style={{ height: "25px", width: "25px", color: "#0073b7"}} />}
@@ -406,6 +407,7 @@ const MainListItems = (props) => {
               primary="Dashboard"
               icon={<TbLayoutDashboard style={{ height: "25px", width: "25px", color: "#FF5722"}} />}
             />
+			
           </>
         )}
       />
@@ -521,7 +523,7 @@ const MainListItems = (props) => {
               }}
               inset
               color="inherit">
-              <Typography variant="overline" style={{ fontWeight: 'normal' }}>  {i18n.t("mainDrawer.listItems.administration")} </Typography>
+             <Typography variant="overline" style={{ fontWeight: 'normal' }}>  {i18n.t("mainDrawer.listItems.administration")} </Typography>
             </ListSubheader>
 
             {user.super && (
@@ -531,6 +533,8 @@ const MainListItems = (props) => {
                 icon={<AnnouncementIcon />}
               />
             )}
+			
+			
             {showOpenAi && (
               <ListItemLink
                 to="/prompts"
@@ -579,7 +583,7 @@ const MainListItems = (props) => {
                 />
               </>
             )}
-   {/*          <ListItemLink
+{/*             <ListItemLink
               to="/financeiro"
               primary={i18n.t("mainDrawer.listItems.financeiro")}
               icon={<LocalAtmIcon />}
@@ -591,6 +595,28 @@ const MainListItems = (props) => {
               icon={<SettingsOutlinedIcon />}
             />
 			
+		{user.super && (	
+			<ListSubheader
+              hidden={collapsed}
+              style={{
+                position: "relative",
+                fontSize: "17px",
+                textAlign: "left",
+                paddingLeft: 20
+              }}
+              inset
+              color="inherit">
+              <Typography variant="overline" style={{ fontWeight: 'normal' }}>  {i18n.t("Sistema")} </Typography>
+            </ListSubheader>
+			)}
+			{user.super && (
+			<ListItemLink
+              to="/LogLauncher"
+              primary={i18n.t("mainDrawer.listItems.LogLauncher")}
+              icon={<AutorenewIcon />}
+            />
+			)}
+			
 			
             {!collapsed && (
               <React.Fragment>
@@ -601,10 +627,33 @@ const MainListItems = (props) => {
                 <img style={{ width: "100%", padding: "10px" }} src={logo} alt="image" />            
               </Hidden> 
               */}
-              <Typography style={{ fontSize: "12px", padding: "10px", textAlign: "right", fontWeight: "bold" }}>
-                V: {`${version}`}
+<Typography 
+  style={{ 
+    fontSize: "12px", 
+    padding: "10px", 
+    textAlign: "right", 
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: "4px"
+  }}
+>
+  {`${version}`}
+  <span style={{
+    backgroundColor: "#f0f0f0",
+    color: "#333333",
+    fontSize: "10px",
+    padding: "2px 6px",
+    borderRadius: "10px",
+    fontWeight: "bold",
+    lineHeight: "normal",
+    border: "1px solid #dcdcdc"
+  }}>
+    BASE
+  </span>
 
-                </Typography>
+</Typography>
               </React.Fragment>
             )}
           </>
@@ -619,9 +668,9 @@ const MainListItems = (props) => {
           className={classes.logoutButton}
         >
           <ListItemIcon>
-          <TbLogout style={{ height: "25px", width: "25px", color: "white"}} />
+            <RotateRight style={{ color: 'white' }} />
           </ListItemIcon>
-          <ListItemText style={{ color: "white"}} primary={i18n.t("Salir")} />
+          <ListItemText primary={i18n.t("Salir")} />
         </ListItem>
       </li>
     </div>

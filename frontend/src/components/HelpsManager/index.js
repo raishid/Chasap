@@ -202,7 +202,7 @@ export default function HelpsManager () {
             const helpList = await list()
             setRecords(helpList)
         } catch (e) {
-            toast.error('Não foi possível carregar a lista de registros')
+            toast.error('No se pudo cargar la lista de registros');
         }
         setLoading(false)
     }
@@ -220,7 +220,7 @@ export default function HelpsManager () {
             toast.success('¡Operación realizada con éxito!');
         } catch (e) {
           toast.error('No fue posible realizar la operación. Verifica si ya existe una ayuda con el mismo nombre o si los campos fueron completados correctamente');
-        }        
+        }   
         setLoading(false)
     }
 
@@ -233,7 +233,7 @@ export default function HelpsManager () {
             toast.success('¡Operación realizada con éxito!');
         } catch (e) {
           toast.error('No fue posible realizar la operación');
-        }        
+        }  
         setLoading(false)
     }
 
@@ -278,7 +278,7 @@ export default function HelpsManager () {
                 </Grid>
             </Grid>
             <ConfirmationModal
-                title="Exclusão de Registro"
+                title="Eliminación de Registro"
                 open={showConfirmDialog}
                 onClose={() => setShowConfirmDialog(false)}
                 onConfirm={() => handleDelete()}

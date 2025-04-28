@@ -53,7 +53,7 @@ const MarkDeleteWhatsAppMessage = async (from: any, timestamp?: any, msgId?: str
           });
       }
     } catch (err) {
-      console.log("Erro ao tentar marcar a mensagem com excluída")
+      console.log("❌ ERROR AL INTENTAR MARCAR EL MENSAJE COMO ELIMINADO");
     }
 
     return timestamp;

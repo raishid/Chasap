@@ -113,9 +113,9 @@ const handleSendEmail = async (values) => {
     console.log("API Response:", response.data);
 
     if (response.data.status === 404) {
-      toast.error("Email não encontrado");
+      toast.error("Email no encontrado");
     } else {
-      toast.success(i18n.t("¡Correo electrónico enviado exitosamente!"));
+      toast.success(i18n.t("¡Correo electrónico enviado con éxito!"));
     }
   } catch (err) {
     console.log("API Error:", err);
@@ -135,7 +135,7 @@ const handleSendEmail = async (values) => {
           `${process.env.REACT_APP_BACKEND_URL}/resetpasswords/${email}/${token}/${newPassword}`
         );
         setError(""); // Limpe o erro se não houver erro
-        toast.success(i18n.t("Restablecimiento de contraseña exitoso."));
+        toast.success(i18n.t("Contraseña redefinida con éxito."));
         history.push("/login");
       } catch (err) {
         console.log(err);
@@ -148,17 +148,17 @@ const handleSendEmail = async (values) => {
     email: Yup.string().email("Invalid email").required("Required"),
     newPassword: isResetPasswordButtonClicked
       ? Yup.string()
-          .required("Campo obrigatorio")
+          .required("Campo obrigatório")
           .matches(
             passwordRegex,
-            "Su contraseña debe tener al menos 8 caracteres, incluida una letra mayúscula, una letra minúscula y un número."
+            "Sua senha precisa ter no mínimo 8 caracteres, sendo uma letra maiúscula, uma minúscula e um número."
           )
       : Yup.string(), // Sem validação se não for redefinição de senha
     confirmPassword: Yup.string().when("newPassword", {
       is: (newPassword) => isResetPasswordButtonClicked && newPassword,
       then: Yup.string()
-        .oneOf([Yup.ref("newPassword"), null], "Las contraseñas no coinciden")
-        .required("Campo obligatorio"),
+        .oneOf([Yup.ref("newPassword"), null], "As senhas não correspondem")
+        .required("Campo obrigatório"),
       otherwise: Yup.string(), // Sem validação se não for redefinição de senha
     }),
   });
@@ -176,7 +176,7 @@ const handleSendEmail = async (values) => {
             />
           </div>
           <Typography component="h1" variant="h5">
-            {i18n.t("Restablecer contraseña")}
+            {i18n.t("Redefinir senha")}
           </Typography>
           <Formik
             initialValues={{
@@ -224,7 +224,7 @@ const handleSendEmail = async (values) => {
                           variant="outlined"
                           fullWidth
                           id="token"
-                          label="Código de verificación"
+                          label="Código de Verificação"
                           name="token"
                           error={touched.token && Boolean(errors.token)}
                           helperText={touched.token && errors.token}
@@ -239,7 +239,7 @@ const handleSendEmail = async (values) => {
                           fullWidth
                           type={showPassword ? "text" : "password"}
                           id="newPassword"
-                          label="Nueva contraseña"
+                          label="Nueva Contraseña"
                           name="newPassword"
                           error={
                             touched.newPassword &&
@@ -274,7 +274,7 @@ const handleSendEmail = async (values) => {
                           fullWidth
                           type={showConfirmPassword ? "text" : "password"}
                           id="confirmPassword"
-                          label="Confirmar Contraseña"
+                          label="Confirme a senha"
                           name="confirmPassword"
                           error={
                             touched.confirmPassword &&
@@ -335,7 +335,7 @@ const handleSendEmail = async (values) => {
                       component={RouterLink}
                       to="/signup"
                     >
-                      {i18n.t("¿No tienes una cuenta? ¡Inscribirse!")}
+                      {i18n.t("Não tem uma conta? Cadastre-se!")}
                     </Link>
                   </Grid>
                 </Grid>

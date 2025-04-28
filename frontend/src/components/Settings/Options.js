@@ -33,12 +33,12 @@ const useStyles = makeStyles((theme) => ({
     height: 240,
   },
   tab: {
-    backgroundColor: theme.palette.options,  //DARK MODE PLW DESIGN//
+    backgroundColor: theme.palette.options,  //DARK MODE Whaticket SaaS//
     borderRadius: 4,
     width: "100%",
     "& .MuiTab-wrapper": {
       color: theme.palette.fontecor,
-    },   //DARK MODE PLW DESIGN//
+    },   //DARK MODE Whaticket SaaS//
     "& .MuiTabs-flexContainer": {
       justifyContent: "center"
     }
@@ -157,6 +157,9 @@ export default function Options(props) {
   
   const [sendGreetingMessageOneQueues, setSendGreetingMessageOneQueues] = useState("disabled");
   const [loadingSendGreetingMessageOneQueues, setLoadingSendGreetingMessageOneQueues] = useState(false);
+  
+  const [HubNotificaMeType, setHubNotificaMeType] = useState("");
+  const [loadingHubNotificaMeType, setLoadingHubNotificaMeType] = useState(false);   
 
   const { update } = useSettings();
 
@@ -194,12 +197,12 @@ export default function Options(props) {
         setviewgroups(viewgroups.value);
       }
       
-	  {/*PLW DESIGN SAUDAÇÃO*/}
+	  {/*Whaticket SaaS SAUDAÇÃO*/}
       const SendGreetingAccepted = settings.find((s) => s.key === "sendGreetingAccepted");
       if (SendGreetingAccepted) {
         setSendGreetingAccepted(SendGreetingAccepted.value);
       }	 
-	  {/*PLW DESIGN SAUDAÇÃO*/}	 
+	  {/*Whaticket SaaS SAUDAÇÃO*/}	 
 	  
 	  {/*TRANSFERIR TICKET*/}	
 	  const SettingsTransfTicket = settings.find((s) => s.key === "sendMsgTransfTicket");
@@ -425,6 +428,17 @@ export default function Options(props) {
     toast.success("Operación actualizada con éxito.");
     setLoadingSettingsTransfTicket(false);
   } 
+
+  async function handleChangeHubNotificaMe(value) {
+    setHubNotificaMeType(value);
+    setLoadingHubNotificaMeType(true);
+    await update({
+      key: "hubToken",
+      value,
+    });
+    toast.success("Operación actualizada con éxito.");
+    setLoadingHubNotificaMeType(false);
+  } 
  
   async function handleChangeIPIxc(value) {
     setIpIxcType(value);
@@ -494,7 +508,7 @@ export default function Options(props) {
   }
   return (
     <>
-      <Grid spacing={3} container>
+<Grid spacing={3} container>
         <Grid xs={12} sm={12} md={12} item>
           <FormControl className={classes.selectContainer}>
             <InputLabel id="ratings-label">Reseñas</InputLabel>
@@ -699,7 +713,7 @@ export default function Options(props) {
 		
       </Grid>
 	  
-		<OnlyForSuperUser
+      <OnlyForSuperUser
 				user={currentUser}
 				yes={() => (
 				  <>
@@ -808,8 +822,45 @@ export default function Options(props) {
         </Tabs>
 
       </Grid>
+
+          {/*-----------------HUB NOTIFICAME-----------------*/}
+        <Grid spacing={3} container
+        style={{ marginBottom: 10 }}>
+        <Tabs
+          indicatorColor="primary"
+          textColor="primary"
+          scrollButtons="on"
+          variant="scrollable"
+          className={classes.tab}
+        >
+          <Tab label="HUB NOTIFICAME" />
+
+        </Tabs>
+        <Grid xs={12} sm={12} md={12} item>
+          <FormControl className={classes.selectContainer}>
+            <TextField
+              id="HubNotificaMe"
+              name="HubNotificaMe"
+              margin="dense"
+              label="Token Account"
+              variant="outlined"
+              value={HubNotificaMeType}
+              onChange={async (e) => {
+                handleChangeHubNotificaMe(e.target.value);
+              }}
+            >
+            </TextField>
+            <FormHelperText>
+              {loadingHubNotificaMeType && "Actualizando..."}
+            </FormHelperText>
+          </FormControl>
+        </Grid>
+      </Grid>
+      {/*-----------------HUB NOTIFICAME-----------------*/}
+
+      
       {/*-----------------IXC-----------------*/}
-      {/* <Grid spacing={3} container
+    {/*   <Grid spacing={3} container
         style={{ marginBottom: 10 }}>
         <Tabs
           indicatorColor="primary"
@@ -863,7 +914,7 @@ export default function Options(props) {
         </Grid>
       </Grid> */}
       {/*-----------------MK-AUTH-----------------*/}
-     {/*  <Grid spacing={3} container
+    {/*   <Grid spacing={3} container
         style={{ marginBottom: 10 }}>
         <Tabs
           indicatorColor="primary"

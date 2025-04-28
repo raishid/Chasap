@@ -114,7 +114,7 @@ const Prompts = () => {
     async function fetchData() {
       const planConfigs = await getPlanCompany(undefined, companyId);
       if (!planConfigs.plan.useOpenAi) {
-        toast.error("Esta empresa não possui permissão para acessar essa página! Estamos lhe redirecionando.");
+        toast.error("¡Esta empresa no tiene permiso para acceder a esta página! Estamos redirigiéndolo.");
         setTimeout(() => {
           history.push(`/`)
         }, 1000);
@@ -191,16 +191,17 @@ const Prompts = () => {
     <MainContainer>
       {/* Box vermelha com o aviso */}
       <Paper className={classes.redBox} variant="outlined">
+          <Typography variant="body1">
+            <strong>Aviso importante:</strong> Para todos los usuarios de Whaticket que han notado una interrupción en el funcionamiento de OpenAI, nos gustaría aclarar que esto no es un error del sistema. OpenAI <strong>dejó de ofrecer crédito gratuito</strong> de $5 USD para nuevos registros, deberás recargar tu cuenta para continuar utilizando el servicio. Es importante tener en cuenta esta política para garantizar una experiencia fluida e ininterrumpida al utilizar OpenAI con Whaticket. Si notas que el servicio ha dejado de funcionar, verifica si tu crédito gratuito ha expirado y considera recargar tu cuenta si es necesario.
+          </Typography>
+           {/* Links úteis */}
         <Typography variant="body1">
-        <strong>Aviso importante:</strong> Para todos los usuarios de Whaticket que han notado una interrupción en el funcionamiento de OpenAI, nos gustaría aclarar que esto no es un error del sistema. OpenAI <strong>dejó de ofrecer crédito gratuito</strong> de $5 USD para nuevos registros, deberás recargar tu cuenta para continuar utilizando el servicio. Es importante tener en cuenta esta política para garantizar una experiencia fluida e ininterrumpida al utilizar OpenAI con Whaticket. Si notas que el servicio ha dejado de funcionar, verifica si tu crédito gratuito ha expirado y considera recargar tu cuenta si es necesario.
-        </Typography>
-        {/* Links úteis */}
-        <Typography variant="body1">
+          <br />
           <strong>Links Utiles:</strong>
           <br />
           Uso: <a href="https://platform.openai.com/usage">https://platform.openai.com/usage</a>
           <br />
-          Factura: <a href="https://platform.openai.com/account/billing/overview">https://platform.openai.com/account/billing/overview</a>
+          Fatura: <a href="https://platform.openai.com/account/billing/overview">https://platform.openai.com/account/billing/overview</a>
           <br />
           API: <a href="https://platform.openai.com/api-keys">https://platform.openai.com/api-keys</a>
         </Typography>

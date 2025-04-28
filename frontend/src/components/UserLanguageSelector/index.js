@@ -1,71 +1,79 @@
 import React, { useContext, useState } from "react";
-
-import { Button, Menu, MenuItem } from "@material-ui/core";
+import { IconButton, Menu, MenuItem, Box } from "@material-ui/core";
 import TranslateIcon from "@material-ui/icons/Translate";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
 import { i18n } from "../../translate/i18n";
 import { AuthContext } from "../../context/Auth/AuthContext";
-import toastError from "../../errors/toastError";
-import api from "../../services/api";
 
-const UserLanguageSelector = () => {
-    const [langueMenuAnchorEl, setLangueMenuAnchorEl] = useState(null);
+// Objeto con los datos de cada idioma (bandera + nombre)
+const languageData = {
+  "pt-BR": { flag: "🇧🇷", name: "Português (BR)" },
+  "en": { flag: "🇺🇸", name: "English" },
+  "es": { flag: "🇪🇸", name: "Español" },
+  "fr": { flag: "fr", name: "Frances" }
+};
 
-    const { user } = useContext(AuthContext);
+const UserLanguageSelector = ({ iconOnly = true }) => {
+  const [languageMenuAnchorEl, setLanguageMenuAnchorEl] = useState(null);
+  const { user } = useContext(AuthContext);
 
-    const handleOpenLanguageMenu = e => {
-        setLangueMenuAnchorEl(e.currentTarget);
-    };
+  const handleOpenLanguageMenu = (event) => {
+    setLanguageMenuAnchorEl(event.currentTarget);
+  };
 
-    const handleCloseLanguageMenu = () => {
-        setLangueMenuAnchorEl(null);
-    };
+  const handleCloseLanguageMenu = () => {
+    setLanguageMenuAnchorEl(null);
+  };
 
-    const handleChangeLanguage = async language => {
-        try {
-            await i18n.changeLanguage(language);
-            await api.put(`/users/${user.id}`, { language });
-        } catch (err) {
-            toastError(err);
-        }
+  const handleChangeLanguage = async (language) => {
+    try {
+      await i18n.changeLanguage(language); // Cambia el idioma inmediatamente
+      localStorage.setItem("language", language); // Guarda la preferencia
+    } catch (error) {
+      console.error("Error al cambiar idioma:", error);
+    }
+    handleCloseLanguageMenu();
+    window.location.reload(false);
+  };
 
-        handleCloseLanguageMenu();
-    };
+  // Obtiene el idioma actual o usa 'es' como predeterminado
+  const currentLanguage = user?.language || i18n.language || "es";
 
-    return (
-        <>
-            <Button
-                color="inherit"
-                onClick={handleOpenLanguageMenu}
-                startIcon={<TranslateIcon />}
-                endIcon={<ExpandMoreIcon />}
-            >
-                {user.language
-                    ? i18n.t(`languages.${user.language}`)
-                    : i18n.t(`languages.${user.undefined}`)}
-            </Button>
-            <Menu
-                anchorEl={langueMenuAnchorEl}
-                keepMounted
-                open={Boolean(langueMenuAnchorEl)}
-                onClose={handleCloseLanguageMenu}
-            >
-                <MenuItem onClick={() => handleChangeLanguage("pt-BR")}>
-                    {i18n.t("languages.pt-BR")}
-                </MenuItem>
-                <MenuItem onClick={() => handleChangeLanguage("en")}>
-                    {i18n.t("languages.en")}
-                </MenuItem>
-                <MenuItem onClick={() => handleChangeLanguage("es")}>
-                    {i18n.t("languages.es")}
-                </MenuItem>
-                <MenuItem onClick={() => handleChangeLanguage("tr")}>
-                    {i18n.t("languages.tr")}
-                </MenuItem>
-            </Menu>
-        </>
-    );
+  return (
+    <>
+      <IconButton
+        color="inherit"
+        onClick={handleOpenLanguageMenu}
+        aria-label="Seleccionar idioma"
+      >
+        <TranslateIcon />
+        <span style={{ fontSize: "1.2rem", marginRight: 12, paddingLeft: "10px" }}>
+          Idioma
+        </span>
+      </IconButton>
+
+      <Menu
+        anchorEl={languageMenuAnchorEl}
+        keepMounted
+        open={Boolean(languageMenuAnchorEl)}
+        onClose={handleCloseLanguageMenu}
+      >
+        {Object.entries(languageData).map(([code, { flag, name }]) => (
+          <MenuItem
+            key={code}
+            onClick={() => handleChangeLanguage(code)}
+            selected={currentLanguage === code}
+          >
+            <Box display="flex" alignItems="center">
+              <span style={{ fontSize: "1.2rem", marginRight: 12 }}>
+                {flag}
+              </span>
+              {name}
+            </Box>
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
 };
 
 export default UserLanguageSelector;

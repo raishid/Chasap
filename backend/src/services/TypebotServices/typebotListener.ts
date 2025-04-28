@@ -74,7 +74,7 @@ const typebotListener = async ({
             return request.data;
 
         } catch (err) {
-            logger.info("Erro ao criar sessão do typebot: ", err)
+            logger.info("❌ ERROR AL CREAR SESIÓN DEL TYPEBOT: ", err);
             throw err;
         }
     }

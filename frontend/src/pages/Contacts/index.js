@@ -337,7 +337,7 @@ function getDateLastMessage(contact) {
             ? `${i18n.t("contacts.confirmationModal.deleteTitle")} ${
                 deletingContact.name
               }?`
-            : `${i18n.t("contacts.confirmationModal.importTitlte")}`
+            : `${i18n.t("contacts.confirmationModal.importTitle")}`
         }
         open={confirmOpen}
         onClose={setConfirmOpen}
@@ -384,7 +384,7 @@ function getDateLastMessage(contact) {
               color="primary"
               onClick={handleDeleteSelectedContacts}
           >
-              {selectAll ? "Excluir Todos" : "Excluir"}
+              {selectAll ? "Borrar Todos" : "Borrar"}
           </Button>
       )}
       />	
@@ -496,7 +496,7 @@ function getDateLastMessage(contact) {
                 {i18n.t("contacts.table.email")}
               </TableCell>
               <TableCell align="center">
-              {i18n.t("contacts.table.interaction")}
+              {"Última Interaccion"}
               </TableCell>
 			  <TableCell align="center">{"Status"}</TableCell>
               <TableCell align="center">

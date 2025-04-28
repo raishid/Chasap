@@ -136,7 +136,7 @@ const Uploader = () => {
   useEffect(() => {
     async function fetchData() {
       if (!user.super) {
-        toast.error("Sem permissão para acessar!");
+        toast.error("¡Sin permiso para acceder!");
         setTimeout(() => {
           history.push(`/`)
         }, 500);
@@ -157,7 +157,7 @@ const handleFileChange = (event) => {
   } else {
     setFile(null);
     setSelectedFileName(null);
-    toast.error("Use somente arquivos em formato PNG, ICO ou SVG!");
+    toast.error("¡Utilice solo archivos en formato PNG, ICO o SVG!");
   }
 };
 
@@ -169,14 +169,14 @@ const handleFileChange = (event) => {
     event.preventDefault();
 
     if (!file) {
-      toast.warn("Escolha um arquivo!");
+      toast.warn("¡Elija un archivo!");
       return;
     }
-
+    
     if (!selectedOption) {
-      toast.warn("Escolha um destino!");
+      toast.warn("¡Elija un destino!");
       return;
-    }
+    }    
 
     const formData = new FormData();
     formData.append('file', file);
@@ -185,7 +185,7 @@ const handleFileChange = (event) => {
 
       if (response.data.mensagem === 'Arquivo Anexado') {
         setUploaded(true);
-        toast.success("Arquivo enviado com sucesso!");
+        toast.success("¡Archivo enviado con éxito!");
         window.location.reload();
 
       }

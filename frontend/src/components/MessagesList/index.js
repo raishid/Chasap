@@ -1,15 +1,7 @@
 import React, { useState, useEffect, useReducer, useRef, useContext } from "react";
-
-import { 
-  isSameDay, 
-  parseISO, 
-  format 
-} from "date-fns";
+import { isSameDay, parseISO, format } from "date-fns";
 import clsx from "clsx";
-import { 
-  green, 
-  red
- } from "@material-ui/core/colors";
+import { green } from "@material-ui/core/colors";
 import {
   Button,
   CircularProgress,
@@ -18,7 +10,6 @@ import {
   makeStyles,
   Badge,
 } from "@material-ui/core";
-
 import {
   AccessTime,
   Block,
@@ -28,14 +19,13 @@ import {
   GetApp,
   Reply,
 } from "@material-ui/icons";
-
 import AudioModal from "../AudioModal";
 import MarkdownWrapper from "../MarkdownWrapper";
 import ModalImageCors from "../ModalImageCors";
 import MessageOptionsMenu from "../MessageOptionsMenu";
 import whatsBackground from "../../assets/wa-background.png";
 import LocationPreview from "../LocationPreview";
-import whatsBackgroundDark from "../../assets/wa-background-dark.png"; //DARK MODE PLW DESIGN//
+import whatsBackgroundDark from "../../assets/wa-background-dark.png";
 import VCardPreview from "../VCardPreview";
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
@@ -43,9 +33,6 @@ import { SocketContext } from "../../context/Socket/SocketContext";
 import { ForwardMessageContext } from "../../context/ForwarMessage/ForwardMessageContext";
 import { ReplyMessageContext } from "../../context/ReplyingMessage/ReplyingMessageContext";
 import SelectMessageCheckbox from "./SelectMessageCheckbox";
-
-import { Mutex } from "async-mutex";
-const loadPageMutex = new Mutex();
 
 const useStyles = makeStyles((theme) => ({
   messagesListWrapper: {
@@ -58,9 +45,8 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 300,
     minHeight: 200,
   },
-
   messagesList: {
-    backgroundImage: theme.mode === 'light' ? `url(${whatsBackground})` : `url(${whatsBackgroundDark})`, //DARK MODE PLW DESIGN//
+    backgroundImage: theme.mode === 'light' ? `url(${whatsBackground})` : `url(${whatsBackgroundDark})`,
     display: "flex",
     flexDirection: "column",
     flexGrow: 1,
@@ -68,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
     overflowY: "scroll",
     ...theme.scrollbarStyles,
   },
-
   circleLoading: {
     color: green[500],
     position: "absolute",
@@ -77,7 +62,14 @@ const useStyles = makeStyles((theme) => ({
     left: "50%",
     marginTop: 12,
   },
-
+  relationContainer: {
+    marginTop: -10,
+    paddingTop: 5, 
+    fontSize: "12px", 
+    color: "#666", 
+    display: "block", 
+    textAlign: "left",
+  },
   messageLeft: {
     marginRight: 20,
     marginTop: 2,
@@ -92,7 +84,6 @@ const useStyles = makeStyles((theme) => ({
       top: 0,
       right: 0,
     },
-
     whiteSpace: "pre-wrap",
     backgroundColor: "#ffffff",
     color: "#303030",
@@ -106,9 +97,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 5,
     paddingBottom: 0,
     boxShadow: "0 1px 1px #b3b3b3",
-    transition: 'background-color 0.5s ease-in-out',
   },
-
   quotedContainerLeft: {
     margin: "-3px -80px 6px -6px",
     overflow: "hidden",
@@ -116,9 +105,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "7.5px",
     display: "flex",
     position: "relative",
-    cursor: "pointer",
   },
-
   quotedMsg: {
     padding: 10,
     maxWidth: 300,
@@ -127,13 +114,11 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "pre-wrap",
     overflow: "hidden",
   },
-
   quotedSideColorLeft: {
     flex: "none",
     width: "4px",
     backgroundColor: "#6bcbef",
   },
-
   messageRight: {
     marginLeft: 20,
     marginTop: 2,
@@ -148,7 +133,6 @@ const useStyles = makeStyles((theme) => ({
       top: 0,
       right: 0,
     },
-
     whiteSpace: "pre-wrap",
     backgroundColor: "#dcf8c6",
     color: "#303030",
@@ -163,7 +147,6 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 0,
     boxShadow: "0 1px 1px #b3b3b3",
   },
-
   quotedContainerRight: {
     margin: "-3px -80px 6px -6px",
     overflowY: "hidden",
@@ -172,20 +155,17 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     position: "relative",
   },
-
   quotedMsgRight: {
     padding: 10,
     maxWidth: 300,
     height: "auto",
     whiteSpace: "pre-wrap",
   },
-
   quotedSideColorRight: {
     flex: "none",
     width: "4px",
     backgroundColor: "#35cd96",
   },
-
   messageActionsButton: {
     display: "none",
     position: "relative",
@@ -195,23 +175,20 @@ const useStyles = makeStyles((theme) => ({
     opacity: "90%",
     "&:hover, &.Mui-focusVisible": { backgroundColor: "inherit" },
   },
-
   messageContactName: {
     display: "flex",
     color: "#6bcbef",
     fontWeight: 500,
   },
-
   textContentItem: {
     overflowWrap: "break-word",
     padding: "3px 80px 6px 6px",
   },
-  
   textContentItemEdited: {
     overflowWrap: "break-word",
     padding: "3px 120px 6px 6px",
+    borderLeft: "3px solid #6bcbef",
   },
-
   textContentItemDeleted: {
     fontStyle: "italic",
     color: "rgba(0, 0, 0, 0.36)",
@@ -237,7 +214,6 @@ const useStyles = makeStyles((theme) => ({
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
   },
-
   timestamp: {
     fontSize: 11,
     position: "absolute",
@@ -245,7 +221,6 @@ const useStyles = makeStyles((theme) => ({
     right: 5,
     color: "#999",
   },
-
   dailyTimestamp: {
     alignItems: "center",
     textAlign: "center",
@@ -256,146 +231,37 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "10px",
     boxShadow: "0 1px 1px #b3b3b3",
   },
-
   dailyTimestampText: {
     color: "#808888",
     padding: 8,
     alignSelf: "center",
     marginLeft: "0px",
   },
-
   ackIcons: {
     fontSize: 18,
     verticalAlign: "middle",
     marginLeft: 4,
   },
-
   deletedIcon: {
     fontSize: 18,
     verticalAlign: "middle",
     marginRight: 4,
   },
-
   ackDoneAllIcon: {
     color: green[500],
     fontSize: 18,
     verticalAlign: "middle",
     marginLeft: 4,
   },
-
   downloadMedia: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "inherit",
     padding: 10,
+    backgroundColor: theme.mode === 'light' ? '#2DDD7F' : '#1c1c1c',
+    color: theme.mode === 'light' ? '#2DDD7F' : '#FFF',
   },
- '@global': {
-    '@keyframes wave': {
-      '0%, 60%, 100%': {
-        transform: 'initial',
-      },
-      '30%': {
-        transform: 'translateY(-15px)',
-      },
-    },
-    '@keyframes quiet': {
-      '25%': {
-        transform: 'scaleY(.6)'
-      },
-      '50%': {
-        transform: 'scaleY(.4)',
-      },
-      '75%': {
-        transform: 'scaleY(.8)',
-      }
-    },
-    '@keyframes normal': {
-      '25%': {
-        transform: 'scaleY(.1)'
-      },
-      '50%': {
-        transform: 'scaleY(.4)',
-      },
-      '75%': {
-        transform: 'scaleY(.6)',
-      }
-    },
-    '@keyframes loud': {
-      '25%': {
-        transform: 'scaleY(1)'
-      },
-      '50%': {
-        transform: 'scaleY(.4)',
-      },
-      '75%': {
-        transform: 'scaleY(1.2)',
-      }
-    },
-  },
-  wave: {
-    position: 'relative',
-    textAlign: 'center',
-    height: "30px",
-    marginTop: "10px",
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
-  dot: {
-    display: "inline-block",
-    width: "7px",
-    height: "7px",
-    borderRadius: "50%",
-    marginRight: "3px",
-    background: theme.mode === 'light' ? "#303030" : "#ffffff",
-    animation: "wave 1.3s linear infinite",
-    "&:nth-child(2)": {
-      animationDelay: "-1.1s",
-    },
-    "&:nth-child(3)": {
-      animationDelay: "-0.9s",
-    }
-  },
-
-  wavebarsContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    height: "30px",
-    marginTop: "5px",
-    marginBottom: "5px",
-    marginLeft: "auto",
-    marginRight: "auto",
-    "--boxSize": "5px",
-    "--gutter": "4px",
-    width: "calc((var(--boxSize) + var(--gutter)) * 5)",
-  },
-
-  wavebars: {
-    transform: "scaleY(.4)",
-    height: "100%",
-    width: "var(--boxSize)",
-    animationDuration: "1.2s",
-    backgroundColor: theme.mode === 'light' ? "#303030" : "#ffffff",
-    animationTimingFunction: 'ease-in-out',
-    animationIterationCount: 'infinite',
-    borderRadius: '8px',
-  },
-
-  wavebar1: {
-    animationName: 'quiet'
-  },
-  wavebar2: {
-    animationName: 'normal'
-  },
-  wavebar3: {
-    animationName: 'quiet'
-  },
-  wavebar4: {
-    animationName: 'loud'
-  },
-  wavebar5: {
-    animationName: 'quiet'
-  }  
 }));
 
 const reducer = (state, action) => {
@@ -433,7 +299,14 @@ const reducer = (state, action) => {
     const messageIndex = state.findIndex((m) => m.id === messageToUpdate.id);
 
     if (messageIndex !== -1) {
-      state[messageIndex] = messageToUpdate;
+      if (messageToUpdate.isDeleted) {
+        state[messageIndex] = {
+          ...state[messageIndex],
+          ...messageToUpdate
+        };
+      } else {
+        state[messageIndex] = messageToUpdate;
+      }
     }
 
     return [...state];
@@ -446,15 +319,12 @@ const reducer = (state, action) => {
 
 const MessagesList = ({ ticket, ticketId, isGroup }) => {
   const classes = useStyles();
-
   const [messagesList, dispatch] = useReducer(reducer, []);
   const [pageNumber, setPageNumber] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const lastMessageRef = useRef();
-  const scrollRef = useRef();
-    const [contactPresence, setContactPresence] = useState("available");
-
+  const [contactPresence, setContactPresence] = useState("available");
   const [selectedMessage, setSelectedMessage] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
   const messageOptionsMenuOpen = Boolean(anchorEl);
@@ -464,15 +334,20 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
   const { setReplyingMessage } = useContext(ReplyMessageContext);
   const { showSelectMessageCheckbox } = useContext(ForwardMessageContext);
 
-  function loadData(incrementPage = false) {
+  useEffect(() => {
+    dispatch({ type: "RESET" });
+    setPageNumber(1);
+    currentTicketId.current = ticketId;
+  }, [ticketId]);
+
+  useEffect(() => {
     setLoading(true);
-    const thisPageNumber = incrementPage ? pageNumber + 1 : 1;
     const delayDebounceFn = setTimeout(() => {
       const fetchMessages = async () => {
         if (ticketId === undefined) return;
         try {
           const { data } = await api.get("/messages/" + ticketId, {
-            params: { pageNumber: thisPageNumber },
+            params: { pageNumber },
           });
 
           if (currentTicketId.current === ticketId) {
@@ -490,24 +365,11 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
         }
       };
       fetchMessages();
-      setPageNumber(thisPageNumber);
     }, 500);
     return () => {
       clearTimeout(delayDebounceFn);
     };
-  }
-
-
-  useEffect(async () => {
-    dispatch({ type: "RESET" });
-
-    currentTicketId.current = ticketId;
-    
-    await loadPageMutex.runExclusive(async () => {
-      loadData();
-    });
-  }, [ticketId]);
-
+  }, [pageNumber, ticketId]);
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
@@ -522,13 +384,17 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
       }
 
       if (data.action === "update" && data.message.ticketId === currentTicketId.current) {
-        dispatch({ type: "UPDATE_MESSAGE", payload: data.message });
-      }
-    });
-	
-	    socket.on(`company-${companyId}-contact`, (data) => {
-      if (data?.contact?.id === ticket.contact.id && data.action === "update") {
-        setContactPresence(data?.contact?.presence || "available");
+        if (data.message.isEdited) {
+          dispatch({ 
+            type: "UPDATE_MESSAGE", 
+            payload: {
+              ...data.message,
+              body: data.message.body || "Mensagem editada"
+            }
+          });
+        } else {
+          dispatch({ type: "UPDATE_MESSAGE", payload: data.message });
+        }
       }
     });
 
@@ -537,10 +403,8 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
     };
   }, [ticketId, ticket, socketManager]);
 
-  const loadMore = async () => {
-    await loadPageMutex.runExclusive(async () => {
-      loadData(true);
-    });
+  const loadMore = () => {
+    setPageNumber((prevPageNumber) => prevPageNumber + 1);
   };
 
   const scrollToBottom = () => {
@@ -567,10 +431,8 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
   };
 
   const hanldeReplyMessage = (e, message) => {
-    //if (ticket.status === "open" || ticket.status === "group") {
     setAnchorEl(null);
     setReplyingMessage(message);
-    //}
   };
 
   const handleOpenMessageOptionsMenu = (e, message) => {
@@ -583,7 +445,6 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
   };
 
   const checkMessageMedia = (message) => {
-    console.log(message)
     if (message.mediaType === "locationMessage" && message.body.split('|').length >= 2) {
       let locationParts = message.body.split('|')
       let imageLocation = locationParts[0]
@@ -595,103 +456,73 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
         descriptionLocation = message.body.split('|')[2]
   
       return <LocationPreview image={imageLocation} link={linkLocation} description={descriptionLocation} />
-    } else
-  
-      if (message.mediaType === "contactMessage") {
-        let array = message.body.split("\n");
-        let obj = [];
-        let contact = "";
-        for (let index = 0; index < array.length; index++) {
-          const v = array[index];
-          let values = v.split(":");
-          for (let ind = 0; ind < values.length; ind++) {
-            if (values[ind].indexOf("+") !== -1) {
-              obj.push({ number: values[ind] });
-            }
-            if (values[ind].indexOf("FN") !== -1) {
-              contact = values[ind + 1];
-            }
+    } else 
+    
+    if (message.mediaType === "contactMessage") {
+      let array = message.body.split("\n");
+      let obj = [];
+      let contact = "";
+      for (let index = 0; index < array.length; index++) {
+        const v = array[index];
+        let values = v.split(":");
+        for (let ind = 0; ind < values.length; ind++) {
+          if (values[ind].indexOf("+") !== -1) {
+            obj.push({ number: values[ind] });
+          }
+          if (values[ind].indexOf("FN") !== -1) {
+            contact = values[ind + 1];
           }
         }
-        // console.log(message)
-        return <VCardPreview contact={contact} numbers={obj[0].number} />
-      } else
-  
-        if (message.mediaType === "image") {
-          return <ModalImageCors imageUrl={message.mediaUrl} />;
-        } else
-  
-          if (message.mediaType === "audio") {
-            return (
-              <AudioModal url={message.mediaUrl} />
-              // <audio controls>
-              //   <source src={message.mediaUrl} type="audio/ogg"></source>
-              //   {/* <source src={message.mediaUrl} type="audio/mp3"></source> */}
-              // </audio>
-            );
-          } else
-  
-            if (message.mediaType === "video") {
-              return (
-                <video
-                  className={classes.messageMedia}
-                  src={message.mediaUrl}
-                  controls
-                />
-              );
-            } else {
-              return (
-                <>
-                  <div className={classes.downloadMedia}>
-                    <Button
-                      startIcon={<GetApp />}
-                      variant="outlined"
-                      target="_blank"
-                      href={message.mediaUrl}
-                    >
-                      Download
-                    </Button>
-                  </div>
-                  <Divider />
-                </>
-              );
-            }
+      }
+      return <VCardPreview contact={contact} numbers={obj[0].number} />
+    } else if (message.mediaType === "image") {
+      return <ModalImageCors imageUrl={message.mediaUrl} />;
+    } else if (message.mediaType === "audio") {
+      return <AudioModal url={message.mediaUrl} />;
+    } else if (message.mediaType === "video") {
+      return (
+        <video
+          className={classes.messageMedia}
+          src={message.mediaUrl}
+          controls
+        />
+      );
+    } else {
+      return (
+        <>
+          <div className={classes.downloadMedia}>
+            <Button
+              startIcon={<GetApp />}
+              variant="outlined"
+              target="_blank"
+              href={message.mediaUrl}
+            >
+              Download
+            </Button>
+          </div>
+          <Divider />
+        </>
+      );
+    }
   };
 
-  /*
-    const renderMessageAck = (message) => {
-      if (message.ack === 1) {
-        return <AccessTime fontSize="small" className={classes.ackIcons} />;
-      }
-      if (message.ack === 2) {
-        return <Done fontSize="small" className={classes.ackIcons} />;
-      }
-      if (message.ack === 3) {
-        return <DoneAll fontSize="small" className={classes.ackIcons} />;
-      }
-      if (message.ack === 4 || message.ack === 5) {
-        return <DoneAll fontSize="small" className={classes.ackDoneAllIcon} />;
-      }
-    };
-    */
-
-    const renderMessageAck = (message) => {
-      if (message.ack === 0) {
-        return <AccessTime fontSize="small" className={classes.ackIcons} />;
-      }
-      if (message.ack === 1) {
-        return <Done fontSize="small" className={classes.ackIcons} />;
-      }
-      if (message.ack === 2) {
-        return <Done fontSize="small" className={classes.ackIcons} />;
-      }
-      if (message.ack === 3) {
-        return <DoneAll fontSize="small" className={classes.ackIcons} />;
-      }
-      if (message.ack === 4 || message.ack === 5) {
-        return <DoneAll fontSize="small" className={classes.ackDoneAllIcon} style={{color:'#0377FC'}} />;
-      }
-    };
+  const renderMessageAck = (message) => {
+    if (message.ack === 0) {
+      return <AccessTime fontSize="small" className={classes.ackIcons} />;
+    }
+    if (message.ack === 1) {
+      return <Done fontSize="small" className={classes.ackIcons} />;
+    }
+    if (message.ack === 2) {
+      return <Done fontSize="small" className={classes.ackIcons} />;
+    }
+    if (message.ack === 3) {
+      return <DoneAll fontSize="small" className={classes.ackIcons} />;
+    }
+    if (message.ack === 4 || message.ack === 5) {
+      return <DoneAll fontSize="small" className={classes.ackDoneAllIcon} style={{color:'#0377FC'}} />;
+    }
+  };
 
   const renderDailyTimestamps = (message, index) => {
     if (index === 0) {
@@ -736,7 +567,6 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
 
   const renderNumberTicket = (message, index) => {
     if (index < messagesList.length && index > 0) {
-
       let messageTicket = message.ticketId;
       let connectionName = message.ticket?.whatsapp?.name;
       let previousMessageTicket = messagesList[index - 1].ticketId;
@@ -771,15 +601,13 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
   };
 
   const renderQuotedMessage = (message) => {
-    
     return (
       <div
         className={clsx(classes.quotedContainerLeft, {
           [classes.quotedContainerRight]: message.fromMe,
         })}
       >
-        
-      <span
+        <span
           className={clsx(classes.quotedSideColorLeft, {
             [classes.quotedSideColorRight]: message.quotedMsg?.fromMe,
           })}
@@ -811,17 +639,27 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
           }
           {message.quotedMsg.mediaType === "application"
             && (
-              <div className={classes.downloadMedia}>
-                <Button
-                  startIcon={<GetApp />}
-                  color="primary"
-                  variant="outlined"
-                  target="_blank"
-                  href={message.quotedMsg.mediaUrl}
-                >
-                  Download
-                </Button>
-              </div>
+<div className={classes.downloadMedia}>
+  <Button 
+    startIcon={<GetApp />}
+    variant="outlined"
+    href={message.quotedMsg.mediaUrl}
+    target="_blank"
+    sx={(theme) => ({
+      borderColor: theme.palette.mode === 'light' ? '#2DDD7F' : '#FFF',
+      color: theme.palette.mode === 'light' ? '#2DDD7F' : '#FFF',
+      backgroundColor: theme.palette.mode === 'light' ? '#2DDD7F10' : '#1c1c1c',
+      '&:hover': {
+        backgroundColor: theme.palette.mode === 'light' ? '#2DDD7F20' : '#333',
+        borderColor: theme.palette.mode === 'light' ? '#2DDD7F' : '#FFF',
+        color: theme.palette.mode === 'light' ? '#2DDD7F' : '#FFF',
+      }
+    })}
+  >
+    Download
+  </Button>
+</div>
+
             )
           }
 
@@ -838,7 +676,6 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
   const renderMessages = () => {
     if (messagesList.length > 0) {
       const viewMessagesList = messagesList.map((message, index) => {
-
         if (message.mediaType === "call_log") {
           return (
             <React.Fragment key={message.id}>
@@ -864,7 +701,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                 <div>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 17" width="20" height="17">
                     <path fill="#df3333" d="M18.2 12.1c-1.5-1.8-5-2.7-8.2-2.7s-6.7 1-8.2 2.7c-.7.8-.3 2.3.2 2.8.2.2.3.3.5.3 1.4 0 3.6-.7 3.6-.7.5-.2.8-.5.8-1v-1.3c.7-1.2 5.4-1.2 6.4-.1l.1.1v1.3c0 .2.1.4.2.6.1.2.3.3.5.4 0 0 2.2.7 3.6.7.2 0 1.4-2 .5-3.1zM5.4 3.2l4.7 4.6 5.8-5.7-.9-.8L10.1 6 6.4 2.3h2.5V1H4.1v4.8h1.3V3.2z"></path>
-                  </svg> <span>Llamada de voz/vídeo perdida a las {format(parseISO(message.createdAt), "HH:mm")}</span>
+                   </svg> <span>Llamada de voz/vídeo perdida a las {format(parseISO(message.createdAt), "HH:mm")}</span>
                 </div>
               </div>
             </React.Fragment>
@@ -932,7 +769,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                   </div>
                 )}
 
-                {(message.mediaUrl || message.mediaType === "locationMessage" || message.mediaType === "vcard" || message.mediaType === "contactMessage"
+{(message.mediaUrl || message.mediaType === "locationMessage" || message.mediaType === "vcard" || message.mediaType === "contactMessage"
                   //|| message.mediaType === "multi_vcard" 
                 ) && checkMessageMedia(message)}
                 <div className={classes.textContentItem}>
@@ -965,6 +802,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                         >
                         </Badge>
                       </span>
+                      
                     </>
                   )}
 
@@ -987,10 +825,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
             >
               {showSelectMessageCheckbox && (
                 <SelectMessageCheckbox
-                  // showSelectMessageCheckbox={showSelectMessageCheckbox}
                   message={message}
-                // selectedMessagesList={selectedMessagesList}
-                // setSelectedMessagesList={setSelectedMessagesList}
                 />
               )}
                 <IconButton
@@ -1012,7 +847,6 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                   </div>
                 )}
                 {(message.mediaUrl || message.mediaType === "locationMessage" || message.mediaType === "vcard" || message.mediaType === "contactMessage"
-                  //|| message.mediaType === "multi_vcard" 
                 ) && checkMessageMedia(message)}
                 <div
                   className={clsx(classes.textContentItem, {
@@ -1030,7 +864,7 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                   {message.mediaType !== "reactionMessage" && message.mediaType !== "locationMessage" && (
                     <MarkdownWrapper>{message.body}</MarkdownWrapper>
                   )}
-                  {message.quotedMsg && message.mediaType === "reactionMessage" && message.body && (
+         {message.quotedMsg && message.mediaType === "reactionMessage" && message.body && (
                     <>
                       <span style={{ marginLeft: "0px", display: 'flex', alignItems: 'center' }}>
                         <MarkdownWrapper>
@@ -1053,12 +887,11 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
                       </span>
                     </>
                   )}
-                  
-                
+                          
                   <span className={classes.timestamp}>
-                  {message.isEdited ? "Editada " + format(parseISO(message.createdAt), "HH:mm") : format(parseISO(message.createdAt), "HH:mm")}
-                  {renderMessageAck(message)}
-                </span>
+                    {message.isEdited ? "Editada " + format(parseISO(message.createdAt), "HH:mm") : format(parseISO(message.createdAt), "HH:mm")}
+                    {renderMessageAck(message)}
+                  </span>
                 </div>
               </div>
             </React.Fragment>
@@ -1084,28 +917,28 @@ const MessagesList = ({ ticket, ticketId, isGroup }) => {
         className={classes.messagesList}
         onScroll={handleScroll}
       >
-      {messagesList.length > 0 ? renderMessages() : []}
-      {contactPresence === "composing" && (
-        <div className={classes.messageLeft}>
-          <div className={classes.wave}>
-              <span className={classes.dot}></span>
-              <span className={classes.dot}></span>
-              <span className={classes.dot}></span>
-          </div>
-        </div>
-      )}
-      {contactPresence === "recording" && (
-        <div className={classes.messageLeft}>
-          <div className={classes.wavebarsContainer}>
-              <div className={clsx(classes.wavebars, classes.wavebar1)}></div>
-              <div className={clsx(classes.wavebars, classes.wavebar2)}></div>
-              <div className={clsx(classes.wavebars, classes.wavebar3)}></div>
-              <div className={clsx(classes.wavebars, classes.wavebar4)}></div>
-              <div className={clsx(classes.wavebars, classes.wavebar5)}></div>
-          </div>
-        </div>
-      )}
-    </div>
+        {messagesList.length > 0 ? renderMessages() : []}
+            {contactPresence === "composing" && (
+                <div className={classes.messageLeft}>
+                  <div className={classes.wave}>
+                      <span className={classes.dot}></span>
+                      <span className={classes.dot}></span>
+                      <span className={classes.dot}></span>
+                  </div>
+                </div>
+              )}
+              {contactPresence === "recording" && (
+                <div className={classes.messageLeft}>
+                  <div className={classes.wavebarsContainer}>
+                      <div className={clsx(classes.wavebars, classes.wavebar1)}></div>
+                      <div className={clsx(classes.wavebars, classes.wavebar2)}></div>
+                      <div className={clsx(classes.wavebars, classes.wavebar3)}></div>
+                      <div className={clsx(classes.wavebars, classes.wavebar4)}></div>
+                      <div className={clsx(classes.wavebars, classes.wavebar5)}></div>
+                  </div>
+                </div>
+              )}
+      </div>
       {loading && (
         <div>
           <CircularProgress className={classes.circleLoading} />

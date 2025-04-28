@@ -1,5 +1,6 @@
+
 import * as Sentry from "@sentry/node";
-import BullQueue from "bull";
+import Queue from "bull";
 import { addSeconds, differenceInSeconds } from "date-fns";
 import { isArray, isEmpty, isNil } from "lodash";
 import moment from "moment";
@@ -24,8 +25,12 @@ import Schedule from "./models/Schedule";
 import User from "./models/User";
 import Whatsapp from "./models/Whatsapp";
 import ShowFileService from "./services/FileServices/ShowService";
-import { getMessageOptions } from "./services/WbotServices/SendWhatsAppMedia";
+import SendWhatsAppMedia, { getMessageOptions } from "./services/WbotServices/SendWhatsAppMedia";
 import { ClosedAllOpenTickets } from "./services/WbotServices/wbotClosedTickets";
+import FindOrCreateTicketService from "./services/TicketServices/FindOrCreateTicketService";
+const fs = require('fs');
+const mime = require('mime-types');
+const chardet = require('chardet');
 import { logger } from "./utils/logger";
 
 
@@ -54,24 +59,26 @@ interface DispatchCampaignData {
   contactListItemId: number;
 }
 
-export const userMonitor = new BullQueue("UserMonitor", connection);
+export const userMonitor = new Queue("UserMonitor", connection);
 
-export const queueMonitor = new BullQueue("QueueMonitor", connection);
+export const queueMonitor = new Queue("QueueMonitor", connection);
 
-export const messageQueue = new BullQueue("MessageQueue", connection, {
+export const scheduleMonitor = new Queue("ScheduleMonitor", connection);
+export const sendScheduledMessages = new Queue(
+  "SendSacheduledMessages",
+  connection
+);
+
+export const schedulesRecorrenci = new Queue("schedulesRecorrenci", connection)
+
+export const messageQueue = new Queue("MessageQueue", connection, {
   limiter: {
     max: limiterMax as number,
     duration: limiterDuration as number
   }
 });
 
-export const scheduleMonitor = new BullQueue("ScheduleMonitor", connection);
-export const sendScheduledMessages = new BullQueue(
-  "SendSacheduledMessages",
-  connection
-);
-
-export const campaignQueue = new BullQueue("CampaignQueue", connection);
+export const campaignQueue = new Queue("CampaignQueue", connection);
 
 async function handleSendMessage(job) {
   try {
@@ -88,7 +95,7 @@ async function handleSendMessage(job) {
     await SendMessage(whatsapp, messageData);
   } catch (e: any) {
     Sentry.captureException(e);
-    logger.error("MessageQueue -> SendMessage: error", e.message);
+    logger.error("❌ MESSAGEQUEUE -> SENDMESSAGE: ERROR", e.message);
     throw e;
   }
 }
@@ -207,13 +214,136 @@ async function handleCloseTicketsAutomatic() {
         await ClosedAllOpenTickets(companyId);
       } catch (e: any) {
         Sentry.captureException(e);
-        logger.error("ClosedAllOpenTickets -> Verify: error", e.message);
+        logger.error("❌ CLOSEDALLOPENTICKETS -> VERIFY: ERROR", e.message);
         throw e;
       }
 
     });
   });
   job.start()
+}
+
+async function handleSendMessageWbot(job) {
+  try {
+    const { data } = job;
+  
+    if(!data.messageData){
+		return;
+	}
+  
+    //console.log(data);
+  
+    const { wbotId, number, text, options } = data.messageData;
+ 
+  
+  	//console.log(wbotId);
+  
+    const wbot = await getWbot(Number(wbotId));
+  
+  
+    
+  
+    const sentMessage = await wbot.sendMessage(number,{
+        text: text
+      },
+      {
+        ...options
+      }
+    );
+  
+    //console.log(sentMessage);
+  
+
+  } catch (e: any) {
+    Sentry.captureException(e);
+    logger.error("❌ MESSAGEQUEUEWBOT -> SENDMESSAGE: ERROR", e.message);
+    throw e;
+  }
+}
+
+async function handleVerifySchedulesRecorrenci(job) {
+  try {
+    const { count, rows: schedules } = await Schedule.findAndCountAll({
+      where: {
+        status: "ENVIADA",
+        repeatEvery: {
+          [Op.not]: null,
+        },
+        selectDaysRecorrenci: {
+          [Op.not]: '',
+        },
+      },
+      include: [{ model: Contact, as: "contact" }]
+    });
+    if (count > 0 ) {
+      schedules.map(async schedule => {
+        if(schedule?.repeatCount === schedule?.repeatEvery){
+          
+          await schedule.update({
+            repeatEvery: null,
+            selectDaysRecorrenci: null
+          });
+
+        }else{
+          await schedule.update({
+            sentAt: null
+          });
+        }
+        
+        if(schedule?.repeatCount === schedule?.repeatEvery){
+          await schedule.update({
+            repeatEvery: null,
+            selectDaysRecorrenci: null
+          });
+        }else{
+          const newDateRecorrenci = await VerifyRecorrenciDate(schedule);
+        }
+
+      });
+    }
+  } catch (e: any) {
+    Sentry.captureException(e);
+    logger.error("❌ SENDSCHEDULEDMESSAGE -> VERIFY: ERROR", e.message);
+    throw e;
+  }
+}
+
+async function VerifyRecorrenciDate(schedule) {
+  const { sendAt,selectDaysRecorrenci } = schedule;
+  const originalDate = moment(sendAt);
+  
+  let dateFound = false;
+  const diasSelecionados = selectDaysRecorrenci.split(', '); // Dias selecionados
+
+  let i = 1;
+  while (!dateFound) {
+    let nextDate = moment(originalDate).add(i, "days");
+    nextDate = nextDate.set({
+      hour: originalDate.hours(),
+      minute: originalDate.minutes(),
+      second: originalDate.seconds(),
+    });
+  
+    // Verifica se o dia da semana da próxima data está na lista de dias selecionados
+    if (diasSelecionados.includes(nextDate.format('dddd'))) {
+      // A data está dentro do período
+      // Faça algo aqui se necessário
+      let update = schedule?.repeatCount;
+      update = update + 1;
+    
+      await schedule.update({
+        status:'PENDENTE',
+        sendAt: nextDate.format("YYYY-MM-DD HH:mm:ssZ"),
+        repeatCount: update,
+      });
+
+      logger.info(`📅 RECURRENCIA AGENDADA PARA: ${schedule.contact.name}`);
+      
+      // Define a variável de controle para indicar que uma data foi encontrada
+      dateFound = true;
+    }
+    i++;
+  }
 }
 
 async function handleVerifySchedules(job) {
@@ -239,12 +369,12 @@ async function handleVerifySchedules(job) {
           { schedule },
           { delay: 40000 }
         );
-        logger.info(`Disparo agendado para: ${schedule.contact.name}`);
+        logger.info(`⏰ DISPARO AGENDADO PARA: ${schedule.contact.name}`);
       });
     }
   } catch (e: any) {
     Sentry.captureException(e);
-    logger.error("SendScheduledMessage -> Verify: error", e.message);
+    logger.error("❌ SENDSCHEDULEDMESSAGE -> VERIFY: ERROR", e.message);
     throw e;
   }
 }
@@ -259,39 +389,109 @@ async function handleSendScheduledMessage(job) {
     scheduleRecord = await Schedule.findByPk(schedule.id);
   } catch (e) {
     Sentry.captureException(e);
-    logger.info(`Erro ao tentar consultar agendamento: ${schedule.id}`);
+    logger.info(`❌ ERROR AL INTENTAR CONSULTAR AGENDAMIENTO: ${schedule.id}`);
   }
 
   try {
-    const whatsapp = await GetDefaultWhatsApp(schedule.companyId);
+    const whatsapp = await Whatsapp.findByPk(schedule?.whatsappId);
+    const queueId = schedule?.queueId;
 
-    let filePath = null;
-    if (schedule.mediaPath) {
-      filePath = path.resolve("public", schedule.mediaPath);
+    if (schedule?.geral === true) {
+      const ticket = await FindOrCreateTicketService(
+        schedule.contact,
+        schedule.whatsappId,
+        0,
+        schedule.companyId,
+        schedule.contact,
+        true
+      );
+
+      if (queueId != null) {
+        await ticket.update({
+          queueId,
+          whatsappId: schedule.whatsappId,
+          userId: schedule.userId ?? null,
+          isGroup: false,
+          status: schedule.userId ? "open" : "pending"
+        });
+      } else {
+        await ticket.update({
+          whatsappId: schedule.whatsappId,
+          isGroup: false,
+          status: "pending"
+        });
+      }
+
+      if (schedule?.mediaPath) {
+        const url = `public/company${schedule.companyId}/${schedule.mediaPath}`;
+        const nomeDoArquivo = path.basename(url);
+        const tipoMIME = mime.lookup(url);
+        const buffer = fs.readFileSync(url);
+        const encoding = chardet.detect(buffer);
+        const estatisticasDoArquivo = fs.statSync(url);
+
+        const media = {
+          fieldname: "file",
+          originalname: schedule.mediaName,
+          encoding: encoding,
+          mimetype: tipoMIME,
+          destination: url,
+          filename: nomeDoArquivo,
+          path: url,
+          size: estatisticasDoArquivo.size,
+          stream: fs.createReadStream(url),
+          buffer: buffer
+        };
+
+        const Request = {
+          media: media,
+          ticket: ticket,
+          body: schedule.body
+        };
+
+        await SendWhatsAppMedia(Request);
+      }
+
+      if (!schedule.mediaPath) {
+        const wbot = await getWbot(whatsapp.id);
+        await wbot.sendMessage(`${ticket?.contact?.number}@s.whatsapp.net`, {
+          text: schedule?.body
+        });
+      }
+    } else {
+      if (schedule?.mediaPath) {
+        const url = `public/company${schedule.companyId}/${schedule.mediaPath}`;
+        await SendMessage(whatsapp, {
+          number: schedule.contact.number,
+          body: schedule.body,
+          mediaPath: url
+        });
+      }
+
+      await SendMessage(whatsapp, {
+        number: schedule.contact.number,
+        body: schedule.body
+      });
     }
-
-    await SendMessage(whatsapp, {
-      number: schedule.contact.number,
-      body: formatBody(schedule.body, schedule.contact),
-      mediaPath: filePath
-    });
 
     await scheduleRecord?.update({
       sentAt: moment().format("YYYY-MM-DD HH:mm"),
       status: "ENVIADA"
     });
 
-    logger.info(`Mensagem agendada enviada para: ${schedule.contact.name}`);
+    logger.info(`📩 MENSAJE AGENDADO ENVIADO PARA: ${schedule.contact.name}`);
     sendScheduledMessages.clean(15000, "completed");
-  } catch (e: any) {
-    Sentry.captureException(e);
+  } catch (err: any) {
+    Sentry.captureException(err);
     await scheduleRecord?.update({
       status: "ERRO"
     });
-    logger.error("SendScheduledMessage -> SendMessage: error", e.message);
-    throw e;
+    logger.error("❌ SENDSCHEDULEDMESSAGE -> SENDMESSAGE: ERROR", err);
+    throw err;
   }
 }
+
+
 
 async function handleVerifyCampaigns(job) {
   /**
@@ -306,16 +506,15 @@ async function handleVerifyCampaigns(job) {
     );
 
   if (campaigns.length > 0)
-    logger.info(`Campanhas encontradas: ${campaigns.length}`);
+    logger.info(`🎯 CAMPAÑAS ENCONTRADAS: ${campaigns.length}`);
   
   for (let campaign of campaigns) {
     try {
       const now = moment();
       const scheduledAt = moment(campaign.scheduledAt);
       const delay = scheduledAt.diff(now, "milliseconds");
-      logger.info(
-        `Campanha enviada para a fila de processamento: Campanha=${campaign.id}, Delay Inicial=${delay}`
-      );
+      logger.info(`📤 CAMPAÑA ENVIADA A LA FILA: ID=${campaign.id}, ⏱️ RETRASO=${delay}`);
+
       campaignQueue.add(
         "ProcessCampaign",
         {
@@ -407,16 +606,11 @@ export function parseToMilliseconds(seconds) {
 }
 
 async function sleep(seconds) {
-  logger.info(
-    `Sleep de ${seconds} segundos iniciado: ${moment().format("HH:mm:ss")}`
-  );
+  logger.info(`😴 SLEEP DE ${seconds} SEGUNDOS INICIADO: 🕒 ${moment().format("HH:mm:ss")}`);
+
   return new Promise(resolve => {
     setTimeout(() => {
-      logger.info(
-        `Sleep de ${seconds} segundos finalizado: ${moment().format(
-          "HH:mm:ss"
-        )}`
-      );
+      logger.info(`✅ SLEEP DE ${seconds} SEGUNDOS FINALIZADO: 🕒 ${moment().format("HH:mm:ss")}`);
       resolve(true);
     }, parseToMilliseconds(seconds));
   });
@@ -584,7 +778,7 @@ async function handleProcessCampaign(job) {
             { removeOnComplete: true }
           );
           queuePromises.push(queuePromise);
-          logger.info(`Registro enviado pra fila de disparo: Campanha=${campaign.id};Contato=${contacts[i].name};delay=${delay}`);
+          logger.info(`📤 REGISTRO ENVIADO A LA FILA DE DISPARO: CAMPAÑA=${campaign.id}; CONTACTO=${contacts[i].name}; ⏱️ RETRASO=${delay}`);
         }
         await Promise.all(queuePromises);
         await campaign.update({ status: "EM_ANDAMENTO" });
@@ -611,7 +805,7 @@ async function handlePrepareContact(job) {
     const messages = getCampaignValidMessages(campaign);
     if (messages.length) {
       const radomIndex = ultima_msg;
-      console.log('ultima_msg:', ultima_msg);
+      console.log('📩 ÚLTIMA_MSG:', ultima_msg);
       ultima_msg++;
       if (ultima_msg >= messages.length) {
         ultima_msg = 0;
@@ -677,7 +871,7 @@ async function handlePrepareContact(job) {
     await verifyAndFinalizeCampaign(campaign);
   } catch (err: any) {
     Sentry.captureException(err);
-    logger.error(`campaignQueue -> PrepareContact -> error: ${err.message}`);
+    logger.error(`❌ CAMPAIGNQUEUE -> PREPARECONTACT -> ERROR: ${err.message}`);
   }
 }
 
@@ -689,24 +883,22 @@ async function handleDispatchCampaign(job) {
     const wbot = await GetWhatsappWbot(campaign.whatsapp);
 
     if (!wbot) {
-      logger.error(`campaignQueue -> DispatchCampaign -> error: wbot not found`);
+      logger.error(`❌ CAMPAIGNQUEUE -> DISPATCHCAMPAIGN -> ERROR: WBOT NO ENCONTRADO`);
       return;
     }
 
     if (!campaign.whatsapp) {
-      logger.error(`campaignQueue -> DispatchCampaign -> error: whatsapp not found`);
+      logger.error(`❌ CAMPAIGNQUEUE -> DISPATCHCAMPAIGN -> ERROR: WHATSAPP NO ENCONTRADO`);
       return;
     }
-
+    
     if (!wbot?.user?.id) {
-      logger.error(`campaignQueue -> DispatchCampaign -> error: wbot user not found`);
+      logger.error(`❌ CAMPAIGNQUEUE -> DISPATCHCAMPAIGN -> ERROR: USUARIO WBOT NO ENCONTRADO`);
       return;
     }
-
-    logger.info(
-      `Disparo de campanha solicitado: Campanha=${campaignId};Registro=${campaignShippingId}`
-    );
-
+    
+    logger.info(`🚀 DISPARO DE CAMPAÑA SOLICITADO: CAMPAÑA=${campaignId}; REGISTRO=${campaignShippingId}`);
+    
     const campaignShipping = await CampaignShipping.findByPk(
       campaignShippingId,
       {
@@ -716,49 +908,43 @@ async function handleDispatchCampaign(job) {
 
     const chatId = `${campaignShipping.number}@s.whatsapp.net`;
 
-    let body = campaignShipping.message;
-
     if (campaign.confirmation && campaignShipping.confirmation === null) {
-      body = campaignShipping.confirmationMessage
-    }
+      await wbot.sendMessage(chatId, {
+        text: campaignShipping.confirmationMessage
+      });
+      await campaignShipping.update({ confirmationRequestedAt: moment() });
+    } else {
+      await wbot.sendMessage(chatId, {
+        text: campaignShipping.message
+      });
 
-    if (!isNil(campaign.fileListId)) {
-      try {
-        const publicFolder = path.resolve(__dirname, "..", "public");
-        const files = await ShowFileService(campaign.fileListId, campaign.companyId)
-        const folder = path.resolve(publicFolder, "fileList", String(files.id))
-        for (const [index, file] of files.options.entries()) {
-          const options = await getMessageOptions(file.path, path.resolve(folder, file.path), file.name);
+      if (!isNil(campaign.fileListId)) {
+        try {
+          const publicFolder = path.resolve(__dirname, "..", "public", `company${campaign.companyId}`);
+          const files = await ShowFileService(campaign.fileListId, campaign.companyId);
+          const folder = path.resolve(publicFolder, "fileList", String(files.id));
+      
+          for (const [index, file] of files.options.entries()) {
+            const options = await getMessageOptions(file.path, path.resolve(folder, file.path), file.name);
+            await wbot.sendMessage(chatId, { ...options });
+          }
+        } finally {
+          // Caso precise executar alguma ação independentemente de erro
+        }
+      }
+      
+
+      if (campaign.mediaPath) {
+        //const filePath = path.resolve("public", campaign.mediaPath);
+        const filePath = path.resolve(`public/company${campaign.companyId}`, campaign.mediaPath);
+        //const options = await getMessageOptions(campaign.mediaName, filePath);
+        const options = await getMessageOptions(campaign.mediaName, filePath);
+        if (Object.keys(options).length) {
           await wbot.sendMessage(chatId, { ...options });
-        };
-      } catch (error) {
-        logger.info(error);
+        }
       }
+      await campaignShipping.update({ deliveredAt: moment() });
     }
-
-    if (campaign.mediaPath) {
-      const publicFolder = path.resolve(__dirname, "..", "public");
-      const filePath = path.join(publicFolder, campaign.mediaPath);
-
-      const options = await getMessageOptions(campaign.mediaName, filePath, body);
-      if (Object.keys(options).length) {
-        await wbot.sendMessage(chatId, { ...options });
-      }
-    }
-    else {
-      if (campaign.confirmation && campaignShipping.confirmation === null) {
-        await wbot.sendMessage(chatId, {
-          text: body
-        });
-        await campaignShipping.update({ confirmationRequestedAt: moment() });
-      } else {
-
-        await wbot.sendMessage(chatId, {
-          text: body
-        });
-      }
-    }
-    await campaignShipping.update({ deliveredAt: moment() });
 
     await verifyAndFinalizeCampaign(campaign);
 
@@ -768,13 +954,12 @@ async function handleDispatchCampaign(job) {
       record: campaign
     });
 
-    logger.info(
-      `Campanha enviada para: Campanha=${campaignId};Contato=${campaignShipping.contact.name}`
-    );
+    logger.info(`📤 CAMPAÑA ENVIADA A: CAMPAÑA=${campaignId}; CONTACTO=${campaignShipping.contact.name}`);
+
   } catch (err: any) {
     Sentry.captureException(err);
-    logger.error(err.message);
-    console.log(err.stack);
+    logger.error(`❌ ${err.message}`);
+    console.error("⚠️ PILA DE ERRORES:", err.stack);
   }
 }
 
@@ -787,16 +972,15 @@ async function handleLoginStatus(job) {
     try {
       const user = await User.findByPk(item.id);
       await user.update({ online: false });
-      logger.info(`Usuario desconectado: ${item.id}`);
+      logger.info(`🔴 USUARIO CAMBIADO A OFFLINE: ${item.id}`);
     } catch (e: any) {
       Sentry.captureException(e);
     }
   }
 }
 
-
 async function handleInvoiceCreate() {
-  logger.info("GESTIONANDO RECURSOS...");
+  logger.info("📝 GENERANDO RECIBO...");
   const job = new CronJob('*/5 * * * * *', async () => {
     const companies = await Company.findAll();
     companies.map(async c => {
@@ -805,24 +989,24 @@ async function handleInvoiceCreate() {
       const dueDate = c.dueDate; 
       const date = moment(dueDate).format();
       const timestamp = moment().format();
-      const hoje = moment().format("DD/MM/yyyy");
-      const vencimento = moment(dueDate).format("DD/MM/yyyy");
-      const diff = moment(vencimento, "DD/MM/yyyy").diff(moment(hoje, "DD/MM/yyyy"));
+      const hoy = moment().format("DD/MM/yyyy");
+      const vencimiento = moment(dueDate).format("DD/MM/yyyy");
+      const diff = moment(vencimiento, "DD/MM/yyyy").diff(moment(hoy, "DD/MM/yyyy"));
       const dias = moment.duration(diff).asDays();
     
       if(status === true){
 
-      	//logger.info(`EMPRESA: ${c.id} está ATIVA com vencimento em: ${vencimento} | ${dias}`);
+      	//logger.info(`EMPRESA: ${c.id} está ACTIVA con vencimiento en: ${vencimiento} | ${dias}`);
       
-      	//Verifico se a empresa está a mais de 10 dias sem pagamento
+      	//Verifico si la empresa está más de 10 días sin pago
         
         if(dias <= -3){
        
-          logger.info(`EMPRESA: ${c.id} está VENCIDA A MAIS DE 3 DIAS... INATIVANDO... ${dias}`);
+          logger.info(`⚠️ EMPRESA: ${c.id} ESTÁ VENCIDA POR MÁS DE 3 DÍAS... DESACTIVANDO... ${dias}`);
           c.status = false;
-          await c.save(); // Save the updated company record
-          logger.info(`EMPRESA: ${c.id} foi INATIVADA.`);
-          logger.info(`EMPRESA: ${c.id} Desativando conexões com o WhatsApp...`);
+          await c.save(); // Guardar el registro actualizado de la empresa
+          logger.info(`✅ EMPRESA: ${c.id} HA SIDO DESACTIVADA.`);
+          logger.info(`🔒 EMPRESA: ${c.id} DESACTIVANDO CONEXIONES CON WHATSAPP...`);          
           
           try {
     		const whatsapps = await Whatsapp.findAll({
@@ -838,13 +1022,13 @@ async function handleInvoiceCreate() {
     				await whatsapp.update({ status: "DISCONNECTED", session: "" });
     				const wbot = getWbot(whatsapp.id);
     				await wbot.logout();
-                	logger.info(`EMPRESA: ${c.id} teve o WhatsApp ${whatsapp.id} desconectado...`);
+            logger.info(`📉 EMPRESA: ${c.id} TUVO EL WHATSAPP ${whatsapp.id} DESCONECTADO...`);
   				}
     		}
           
   		  } catch (error) {
-    		// Lidar com erros, se houver
-    		console.error('Erro ao buscar os IDs de WhatsApp:', error);
+    		// Manejar errores, si los hay
+    		console.error('Error al buscar los IDs de WhatsApp:', error);
     		throw error;
   		  }
 
@@ -856,18 +1040,18 @@ async function handleInvoiceCreate() {
           const sql = `SELECT * FROM "Invoices" WHERE "companyId" = ${c.id} AND "status" = 'open';`
           const openInvoices = await sequelize.query(sql, { type: QueryTypes.SELECT }) as { id: number, dueDate: Date }[];
 
-          const existingInvoice = openInvoices.find(invoice => moment(invoice.dueDate).format("DD/MM/yyyy") === vencimento);
+          const existingInvoice = openInvoices.find(invoice => moment(invoice.dueDate).format("DD/MM/yyyy") === vencimiento);
         
           if (existingInvoice) {
-            // Due date already exists, no action needed
-            //logger.info(`Fatura Existente`);
+            // La fecha de vencimiento ya existe, no se necesita acción
+            //logger.info(`Factura Existente`);
         
           } else if (openInvoices.length > 0) {
             const updateSql = `UPDATE "Invoices" SET "dueDate" = '${date}', "updatedAt" = '${timestamp}' WHERE "id" = ${openInvoices[0].id};`;
 
             await sequelize.query(updateSql, { type: QueryTypes.UPDATE });
         
-            logger.info(`Fatura Atualizada ID: ${openInvoices[0].id}`);
+            logger.info(`🧾 FACTURA ACTUALIZADA ID: ${openInvoices[0].id}`);
         
           } else {
           
@@ -876,9 +1060,9 @@ async function handleInvoiceCreate() {
 
             const invoiceInsert = await sequelize.query(sql, { type: QueryTypes.INSERT });
         
-            logger.info(`Fatura Gerada para o cliente: ${c.id}`);
+            logger.info(`🧾 FACTURA GENERADA PARA EL CLIENTE: ${c.id}`);
 
-            // Rest of the code for sending email
+            // Resto del código para enviar el correo electrónico
           }
         
           
@@ -887,9 +1071,10 @@ async function handleInvoiceCreate() {
         } // if(dias <= -6){
         
 
+
       }else{ // ELSE if(status === true){
       
-      	//logger.info(`EMPRESA: ${c.id} está INATIVA`);
+      	//logger.info(`EMPRESA: ${c.id} está INACTIVA`);
       
       }
     
@@ -901,14 +1086,12 @@ async function handleInvoiceCreate() {
   job.start();
 }
 
-
-
 handleCloseTicketsAutomatic()
 
 handleInvoiceCreate()
 
 export async function startQueueProcess() {
-  logger.info("Procesamiento de Filas");
+  logger.info("🚀 INICIANDO PROCESAMIENTO DE FILAS");
 
   messageQueue.process("SendMessage", handleSendMessage);
 
@@ -934,25 +1117,27 @@ export async function startQueueProcess() {
     "Verify",
     {},
     {
-      repeat: { cron: "*/5 * * * * *", key: "verify" },
+      repeat: { cron: "*/30 * * * * *" }, // De 5s para 30s
       removeOnComplete: true
     }
   );
+
 
   campaignQueue.add(
     "VerifyCampaigns",
     {},
     {
-      repeat: { cron: "*/20 * * * * *", key: "verify-campaing" },
+      repeat: { cron: "*/5 * * * *", key: "verify-campaing" }, // De 20s para 5 minutos
       removeOnComplete: true
     }
   );
+
 
   userMonitor.add(
     "VerifyLoginStatus",
     {},
     {
-      repeat: { cron: "* * * * *", key: "verify-login" },
+      repeat: { cron: "*/5 * * * *", key: "verify-login" }, // De 1 minuto para 5 minutos
       removeOnComplete: true
     }
   );

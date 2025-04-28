@@ -48,7 +48,6 @@ const QueueSelect = ({ selectedQueueIds, onChange, multiple = true, title = i18n
 				<InputLabel>
 					{i18n.t("queueModal.form.filas")}
 				</InputLabel>
-	{/* 			<InputLabel shrink={selectedQueueIds ? true : false} >{title}</InputLabel> */}
 				<Select
 					label={title}
 					multiple={multiple}

@@ -223,7 +223,7 @@ const QueueModal = ({ open, onClose, queueId }) => {
           await api.post(`/queue/${queueId}/media-upload`, formData);
       }
 	  }
-      toast.success("Queue saved successfully");
+      toast.success("Fila guardada con éxito");
       handleClose();
     } catch (err) {
       toastError(err);
@@ -231,7 +231,7 @@ const QueueModal = ({ open, onClose, queueId }) => {
   };
 
   const handleSaveSchedules = async (values) => {
-    toast.success("Clique em salvar para registar as alterações");
+    toast.success("Haz clic en guardar para registrar los cambios");
     setSchedules(values);
     setTab(0);
   };

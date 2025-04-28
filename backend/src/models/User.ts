@@ -34,6 +34,9 @@ class User extends Model<User> {
   name: string;
 
   @Column
+  whatsappNumber: string;
+
+  @Column
   email: string;
   
   @Column

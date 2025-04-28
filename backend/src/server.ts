@@ -8,43 +8,53 @@ import { startQueueProcess } from "./queues";
 import { TransferTicketQueue } from "./wbotTransferTicketQueue";
 import cron from "node-cron";
 
+
 const server = app.listen(process.env.PORT, async () => {
-  try {
-    const companies = await Company.findAll();
-    const sessionPromises = [];
-
-    for (const c of companies) {
-      sessionPromises.push(StartAllWhatsAppsSessions(c.id));
+  const companies = await Company.findAll();
+  const allPromises: any[] = [];
+  companies.map(async c => {
+  
+  	if(c.status === true){  
+    	const promise = StartAllWhatsAppsSessions(c.id);
+    	allPromises.push(promise);
+    }else{
+      logger.info(`❌ EMPRESA INACTIVA: ${c.id} | ${c.name}`);
     }
+  
+  });
 
-    await Promise.all(sessionPromises);
+  Promise.all(allPromises).then(() => {
     startQueueProcess();
-    logger.info(`El servidor puerto: ${process.env.PORT}`);
-  } catch (error) {
-    logger.error("Error starting server:", error);
-    process.exit(1);
-  }
+  });
+  logger.info(`🚀 SERVIDOR INICIADO EN EL PUERTO: ${process.env.PORT}`);
 });
 
 process.on("uncaughtException", err => {
-  logger.error(`${new Date().toUTCString()} uncaughtException:`, err.message);
-  logger.error(err.stack);
-  // Remove process.exit(1); to avoid abrupt shutdowns
+  console.error(`${new Date().toUTCString()} uncaughtException:`, err.message);
+  console.error(err.stack);
+  process.exit(1);
 });
 
 process.on("unhandledRejection", (reason, p) => {
-  logger.error(`${new Date().toUTCString()} unhandledRejection:`, reason, p);
-  // Remove process.exit(1); to avoid abrupt shutdowns
+  console.error(
+    `${new Date().toUTCString()} unhandledRejection:`,
+    reason,
+    p
+  );
+  process.exit(1);
 });
 
-cron.schedule("* */5 * * *", async () => {
+
+cron.schedule("*/5 * * * *", async () => {  // De 1 minuto para 5 minutos
   try {
-    logger.info(`Serviço de transferência de tickets iniciado`);
+    logger.info(`🚀 SERVICIO DE TRANSFERENCIA DE TICKETS INICIADO`);
     await TransferTicketQueue();
   } catch (error) {
-    logger.error("Error in cron job:", error);
-  }
+    logger.error(`❌ ERROR EN EL CRON JOB:`, error);
+  }  
 });
+
+
 
 initIO(server);
 
@@ -53,10 +63,10 @@ gracefulShutdown(server, {
   signals: "SIGINT SIGTERM",
   timeout: 30000, // 30 seconds
   onShutdown: async () => {
-    logger.info("Gracefully shutting down...");
-    // Add any other cleanup code here, if necessary
+    logger.info("🔒 CERRANDO EL SERVIDOR DE MANERA SEGURA...");
+    // Agrega cualquier otro código de limpieza aquí, si es necesario
   },
   finally: () => {
-    logger.info("Server shutdown complete.");
-  }
+    logger.info("✅ APAGADO DEL SERVIDOR COMPLETADO.");
+  }  
 });

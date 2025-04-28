@@ -68,13 +68,13 @@ function QuickMessagesTable(props) {
     return (
         <Table size="small">
             <TableHead>
-                <TableRow>
-                    <TableCell align="center">Atajo</TableCell>
-                    <TableCell align="left">Mensaje</TableCell>
-                    { !readOnly ? (
-                        <TableCell align="center">Comportamiento</TableCell>
-                    ) : null}
-                </TableRow>
+             <TableRow>
+                <TableCell align="center">Atajo</TableCell>
+                <TableCell align="left">Mensaje</TableCell>
+                { !readOnly ? (
+                    <TableCell align="center">Comportamiento</TableCell>
+                ) : null}
+            </TableRow>
             </TableHead>
             <TableBody>
                 {loading ? <TableRowSkeleton columns={readOnly ? 2 : 3} /> : renderRows()}

@@ -48,7 +48,7 @@ const messages = {
       companies: {
         title: "Cadastrar Empresa",
         form: {
-          name: "Nombre de Empresa",
+          name: "Nome da Empresa",
           plan: "Plano",
           token: "Token",
           submit: "Cadastrar",
@@ -70,6 +70,7 @@ const messages = {
       },
       connections: {
         title: "Conexões",
+        subtitle:"Todos os WhatsApp's",
         toasts: {
           deleted: "Conexão com o WhatsApp excluída com sucesso!",
         },
@@ -87,6 +88,7 @@ const messages = {
           qrcode: "QR CODE",
           newQr: "Novo QR CODE",
           connecting: "Conectando",
+          restart:"Restart",
         },
         toolTips: {
           disconnected: {
@@ -126,8 +128,8 @@ const messages = {
 		 tabs: {
           general: "Geral",
           messages: "Mensagens",
-          assessments: "Reseñas",
-          integrations: "Integraciones",
+          assessments: "Avaliações",
+          integrations: "Integrações",
           schedules: "Horário de expediente",
 		 },
         form: {
@@ -161,7 +163,7 @@ const messages = {
         title: "Contatos",
         toasts: {
           deleted: "Contato excluído com sucesso!",
-		  deletedAll: "Todos contatos excluídos com sucesso!",
+		      deletedAll: "Todos contatos excluídos com sucesso!",
         },
 		  searchPlaceholder: "Pesquisar...",
           confirmationModal: {
@@ -301,9 +303,13 @@ const messages = {
           add: "Adicionar fila",
           edit: "Editar fila",
         },
-		confirmationModal: {
-		  "deleteTitle": "Excluir",
-		},
+	toasts: {
+          deleted: "Registro excluído",
+        },      
+        confirmationModal: {
+          deleteTitle: "Excluir",
+          deleteMessage: "Esta ação não pode ser revertida.",
+        },
         form: {
           name: "Nome",
           color: "Cor",
@@ -336,6 +342,9 @@ const messages = {
           sunday: "Domingo",
         },
       },
+      qrCodeModal:{
+        title:"QrCode",
+      },
       userModal: {
         title: {
           add: "Adicionar usuário",
@@ -347,8 +356,8 @@ const messages = {
           password: "Senha",
           profile: "Perfil",
           whatsapp: "Conexão Padrão",
-
-          allTicket: "Ticket Sin Fila [Invisible]",
+          SuperIs: 'DEFINIR SUPERUSER (Somente Admin)',
+          allTicket: "Ticket Sem Fila [Invisível]",
           allTicketEnabled: "Habilitado",
           allTicketDesabled: "Desabilitado",
         },
@@ -365,10 +374,11 @@ const messages = {
           edit: "Editar Agendamento",
         },
         form: {
-          body: "Mensagem",
-          contact: "Contato",
-          sendAt: "Data de Agendamento",
-          sentAt: "Data de Envio",
+          body: 'Mensagem',
+          contact: 'Contato',
+          sendAt: 'Data de Agendamento',
+          sentAt: 'Data de Envio',
+          geral: 'Abrir Ticket?',
         },
         buttons: {
           okAdd: "Adicionar",
@@ -461,6 +471,7 @@ const messages = {
         },
       },
       ticketsList: {
+        called: "Chamado",
         pendingHeader: "Aguardando",
         assignedHeader: "Atendendo",
         noTicketsTitle: "Nada aqui!",
@@ -500,12 +511,13 @@ const messages = {
           schedules: "Agendamentos",
           campaigns: "Campanhas",
           annoucements: "Informativos",
+		  LogLauncher:"Atualizações",
           chats: "Chat Interno",
           financeiro: "Financeiro",
           files: "Lista de arquivos",
           prompts: "Open.Ai",
 		  reports: "Relatórios",
-          queueIntegration: "Integraciones",
+          queueIntegration: "Integrações",
         },
         appBar: {
           notRegister:"Sem notificações",
@@ -516,7 +528,7 @@ const messages = {
         },
       },
       queueIntegration: {
-        title: "Integraciones",
+        title: "Integrações",
         table: {
           id: "ID",
           type: "Tipo",
@@ -578,6 +590,13 @@ const messages = {
           deleteMessage: "Tem certeza que deseja deletar esta lista?",
           deleteAllMessage: "Tem certeza que deseja deletar todas as listas?",
         },
+      },
+      languages: {
+        undefined: "Idioma",
+        "pt-BR": "Português",
+        es: "Español",
+        en: "English",
+        tr: "Türkçe",
       },
       messagesAPI: {
         title: "API",
@@ -1048,6 +1067,7 @@ const messages = {
           "Esta cor já está em uso, escolha outra.",
         ERR_WAPP_GREETING_REQUIRED:
           "A mensagem de saudação é obrigatório quando há mais de uma fila.",
+        ERR_CHECK_NUMBER: "Número inválido. Verifique o número e tente novamente.",
       },
     },
   },

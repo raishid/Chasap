@@ -137,7 +137,7 @@ export const createWebhook = async (
     const create = await gerencianet.pixConfigWebhook(params, body);
     return res.json(create);
   } catch (error) {
-    console.log(error);
+    console.error("⚠️ ERROR:", error);
   }
 };
 

@@ -136,9 +136,9 @@ const useAuth = () => {
         history.push("/tickets");
         setLoading(false);
       } else {
-        toastError(`¡Ups! Tu suscripción venció el ${vencimento}.
-          ¡Ponte en contacto con Soporte para más información!`);          
-        setLoading(false);
+        toastError(`¡Ups! Tu suscripción ha vencido el ${vencimento}. 
+          ¡Ponte en contacto con Soporte para más información!`);
+          setLoading(false);          
       }
 
       //quebra linha 

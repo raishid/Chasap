@@ -60,7 +60,7 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
 export const store = async (req: Request, res: Response): Promise<Response> => {
   const { companyId } = req.user;
   const data = req.body as StoreData;
-  console.log('data------- store:', data);
+  console.log('📊 DATOS------- ALMACÉN:', data);
 
   const schema = Yup.object().shape({
     name: Yup.string().required()
@@ -268,11 +268,12 @@ export const deleteMedia = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+  const { companyId } = req.user;
   const { id } = req.params;
 
   try {
     const campaign = await Campaign.findByPk(id);
-    const filePath = path.resolve("public", campaign.mediaPath);
+    const filePath = path.resolve("public", `company${companyId}`, campaign.mediaPath);
     const fileExists = fs.existsSync(filePath);
     if (fileExists) {
       fs.unlinkSync(filePath);

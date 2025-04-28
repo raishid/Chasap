@@ -184,7 +184,7 @@ const Quickemessages = () => {
   const handleDeleteQuickemessage = async (quickemessageId) => {
     try {
       await api.delete(`/quick-messages/${quickemessageId}`);
-      toast.success(i18n.t("quickemessages.toasts.deleted"));
+      toast.success(i18n.t("quickMessages.toasts.deleted"));
     } catch (err) {
       toastError(err);
     }
@@ -295,7 +295,7 @@ const Quickemessages = () => {
               <TableCell align="center">{quickemessage.shortcode}</TableCell>
               
               <TableCell align="center">
-                {quickemessage.mediaName ?? "Sem anexo"}
+                {quickemessage.mediaName ?? "Sin adjunto"}
               </TableCell>
               <TableCell align="center">
         {quickemessage.geral === true ? (

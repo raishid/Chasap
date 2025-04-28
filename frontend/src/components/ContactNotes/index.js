@@ -134,7 +134,7 @@ export function ContactNotes ({ ticket }) {
                 onClose={setShowOnDeleteDialog}
                 onConfirm={handleDelete}
             >
-              ¿Está seguro que desea eliminar este registro?
+                 ¿Está seguro que desea eliminar este registro?
             </ConfirmationModal>
             <Formik
                 initialValues={newNote}
@@ -190,7 +190,7 @@ export function ContactNotes ({ ticket }) {
                                     </Grid>
                                     <Grid xs={6} item>
                                         <ButtonWithSpinner loading={loading} color="primary" type="submit" variant="contained" autoFocus fullWidth>
-                                            Guardar
+                                         Guardar
                                         </ButtonWithSpinner>
                                     </Grid>
                                 </Grid>

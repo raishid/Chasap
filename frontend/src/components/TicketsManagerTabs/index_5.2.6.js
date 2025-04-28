@@ -387,7 +387,7 @@ const TicketsManagerTabs = () => {
                 isHoveredOpen ||
                 isHoveredClosed
               }
-              badgeContent={i18n.t("Nuevo")}
+              badgeContent={i18n.t("Novo")}
               classes={{ badge: classes.tabsBadge }}
             >
               <IconButton

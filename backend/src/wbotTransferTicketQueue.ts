@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import TicketTraking from "./models/TicketTraking";
+import { format } from "date-fns";
 import moment from "moment";
 import Ticket from "./models/Ticket";
 import Whatsapp from "./models/Whatsapp";
@@ -7,43 +8,57 @@ import { getIO } from "./libs/socket";
 import { logger } from "./utils/logger";
 import ShowTicketService from "./services/TicketServices/ShowTicketService";
 
+
 export const TransferTicketQueue = async (): Promise<void> => {
+
   const io = getIO();
 
-  // Buscar tickets pendientes sin fila asignada
+  //buscar os tickets que em pendentes e sem fila
   const tickets = await Ticket.findAll({
     where: {
       status: "pending",
-      queueId: { [Op.is]: null },
+      queueId: {
+        [Op.is]: null
+      },
     },
+
   });
 
-  for (const ticket of tickets) {
+  // varrer os tickets e verificar se algum deles está com o tempo estourado
+  tickets.forEach(async ticket => {
+
+
+
     const wpp = await Whatsapp.findOne({
-      where: { id: ticket.whatsappId },
+      where: {
+        id: ticket.whatsappId
+      }
     });
 
-    if (!wpp || !wpp.timeToTransfer || !wpp.transferQueueId || wpp.timeToTransfer === 0) {
-      continue;
-    }
+    if (!wpp || !wpp.timeToTransfer || !wpp.transferQueueId || wpp.timeToTransfer == 0) return;
 
-    const deadline = new Date(ticket.updatedAt);
-    deadline.setMinutes(deadline.getMinutes() + wpp.timeToTransfer);
+    let dataLimite = new Date(ticket.updatedAt);
+    dataLimite.setMinutes(dataLimite.getMinutes() + wpp.timeToTransfer);
 
-    if (new Date() > deadline) {
-      await ticket.update({ queueId: wpp.transferQueueId });
+    if (new Date() > dataLimite) {
 
-      const ticketTraking = await TicketTraking.findOne({
-        where: { ticketId: ticket.id },
-        order: [["createdAt", "DESC"]],
+      await ticket.update({
+
+        queueId: wpp.transferQueueId,
+
       });
 
-      if (ticketTraking) {
-        await ticketTraking.update({
-          queuedAt: moment().toDate(),
-          queueId: wpp.transferQueueId,
-        });
-      }
+      const ticketTraking = await TicketTraking.findOne({
+        where: {
+          ticketId: ticket.id
+        },
+        order: [["createdAt", "DESC"]]
+      });
+
+      await ticketTraking.update({
+        queuedAt: moment().toDate(),
+        queueId: wpp.transferQueueId,
+      });
 
       const currentTicket = await ShowTicketService(ticket.id, ticket.companyId);
 
@@ -53,12 +68,14 @@ export const TransferTicketQueue = async (): Promise<void> => {
         .emit(`company-${ticket.companyId}-ticket`, {
           action: "update",
           ticket: currentTicket,
-          traking: "created ticket 33",
+          traking: "created ticket 33"
         });
 
-      logger.info(
-        `Transferencia de ticket automática - Ticket ID: ${ticket.id}, Nueva Fila: ${wpp.transferQueueId}`
-      );
+        logger.info(`🎟️ TRANSFERENCIA DE TICKET AUTOMÁTICA TICKET ID ${ticket.id} PARA LA FILA ${wpp.transferQueueId}`);
     }
-  }
-};
+
+
+  });
+
+
+}

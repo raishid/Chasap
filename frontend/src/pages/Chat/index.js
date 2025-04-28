@@ -25,7 +25,6 @@ import { has, isObject } from "lodash";
 
 import { AuthContext } from "../../context/Auth/AuthContext";
 import withWidth, { isWidthUp } from "@material-ui/core/withWidth";
-import { i18n } from "../../translate/i18n";
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
@@ -139,10 +138,10 @@ export function ChatModal({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
-        Cerrar
+          Cerrar
         </Button>
         <Button onClick={handleSave} color="primary" variant="contained">
-          Salvar
+          Guardar
         </Button>
       </DialogActions>
     </Dialog>
@@ -345,7 +344,7 @@ function Chat(props) {
                 color="primary"
                 variant="contained"
               >
-                {i18n.t("general.new")}
+                Nuevo
               </Button>
             </div>
           

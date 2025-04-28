@@ -1,5 +1,6 @@
 import React from 'react';
 import { parse } from 'vcard-parser';
+
 const vcardStyle = {
     backgroundColor: '#f9f9f9',
     border: '1px solid #ddd',
@@ -11,22 +12,32 @@ const vcardStyle = {
 
 const infoStyle = {
     margin: '5px 0',
+    fontSize: '16px',
 };
 
 const VcardPreview = ({ messageBody }) => {
-    console.log('messageBody', messageBody);
-    const vcardObject = parse(messageBody);
-    const contact = vcardObject.FN;
-    const number = vcardObject.TEL.value;
-    return (
-        <div>
-            <h2>Preview do Cartão de Contato</h2>
-            <div>
-                <p style={infoStyle}>Nome: {contact}</p>
-                <p style={infoStyle}>Número de WhatsApp: {number}</p>
+    // Verificar si messageBody contiene datos válidos
+    if (!messageBody) {
+        return <div>No se encontraron datos para mostrar.</div>;
+    }
+
+    try {
+        const vcardObject = parse(messageBody);
+        const contact = vcardObject.FN || "Nombre no disponible";
+        const number = vcardObject.TEL?.value || "Número no disponible";
+
+        return (
+            <div style={vcardStyle}>
+                <h2>Vista previa de la tarjeta de contacto</h2>
+                <div>
+                    <p style={infoStyle}>Nombre: {contact}</p>
+                    <p style={infoStyle}>Número de WhatsApp: {number}</p>
+                </div>
             </div>
-        </div>
-    );
+        );
+    } catch (error) {
+        return <div>Error al procesar la vCard: {error.message}</div>;
+    }
 };
 
 export default VcardPreview;
