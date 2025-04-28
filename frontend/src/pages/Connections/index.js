@@ -649,10 +649,10 @@ const Connections = () => {
               <Box className={classes.emptyState}>
                 <AccountCircle style={{ fontSize: 60, color: theme.palette.text.disabled }} />
                 <Typography variant="h6" gutterBottom>
-                  Nenhuma conexão encontrada
+                  No se encontró ninguna conexión
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Clique no botão "Adicionar Conexão" para começar
+                  Haz clic en el botón "Agregar Conexión" para comenzar
                 </Typography>
               </Box>
             )}
