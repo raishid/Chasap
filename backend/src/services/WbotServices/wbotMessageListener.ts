@@ -1207,10 +1207,10 @@ const verifyQueue = async (
     return;
   }
 
-  const selectedOption = getBodyMessage(msg);
-  const choosenQueue = /\*\[\s*\d+\s*\]\*\s*-\s*.*/g.test(lastMessage?.body)
-    ? queues[+selectedOption - 1]
-    : undefined;
+  const selectedOption = getBodyMessage(msg)?.trim();
+  const choosenQueue = lastMessage?.body.includes(`*${selectedOption}* -`)
+  ? queues[selectedOption.toUpperCase().charCodeAt(0) - 65]
+  : undefined;
 
   const buttonActive = await Setting.findOne({
     where: {
@@ -1222,11 +1222,12 @@ const verifyQueue = async (
   const botText = async () => {
     let options = "";
     queues.forEach((queue, index) => {
-      options += `*[ ${index + 1} ]* - ${queue.name}\n`;
-    });
+  const letter = String.fromCharCode(65 + index); // 65 es 'A' en ASCII
+  options += `*${letter}* - ${queue.name}\n`;
+});
 
     const textMessage = {
-      text: formatBody(`\u200e${greetingMessage}\n\n${options}`, contact),
+      text: formatBody(`\u200e${greetingMessage}\n\n${options}\n_Escriba_ *salir* _para cerrar el bot o repararlo_\n`, contact),
     };
     
     let lastMsg = map_msg.get(contact.number);
@@ -1507,7 +1508,7 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
   }
 
   // voltar para o menu anterior
-  if (!isNil(queue) && !isNil(ticket.queueOptionId) && messageBody == "0") {
+  if (!isNil(queue) && !isNil(ticket.queueOptionId) && messageBody.toUpperCase() == "X") {
     const option = await QueueOption.findByPk(ticket.queueOptionId);
     await ticket.update({ queueOptionId: option?.parentId });
 
@@ -1518,26 +1519,33 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
     const count = await QueueOption.count({
       where: { parentId: ticket.queueOptionId },
     });
-    let option: any = {};
-    if (count == 1) {
-      option = await QueueOption.findOne({
-        where: { parentId: ticket.queueOptionId },
-      });
-    } else {
-      option = await QueueOption.findOne({
-        where: {
-          option: messageBody || "",
-          parentId: ticket.queueOptionId,
-        },
-      });
-    }
+    
+  
+  
+  	let option: any = {};
+if (count == 1) {
+  option = await QueueOption.findOne({
+    where: { parentId: ticket.queueOptionId },
+  });
+} else {
+  const letterIndex = messageBody.toUpperCase().charCodeAt(0) - 65; // A → 0, B → 1, etc.
+  const queueOptions = await QueueOption.findAll({
+    where: { parentId: ticket.queueOptionId },
+    order: [["option", "ASC"], ["createdAt", "ASC"]],
+  });
+  if (letterIndex >= 0 && letterIndex < queueOptions.length) {
+    option = queueOptions[letterIndex];
+  }
+}
+  
     if (option) {
       await ticket.update({ queueOptionId: option?.id });
     }
 
     // não linha a primeira pergunta
   } else if (!isNil(queue) && isNil(ticket.queueOptionId) && !dontReadTheFirstQuestion) {
-    const option = queue?.options.find((o) => o.option == messageBody);
+    const letterIndex = messageBody.toUpperCase().charCodeAt(0) - 65;
+const option = letterIndex >= 0 && letterIndex < queue?.options.length ? queue.options[letterIndex] : null;
     if (option) {
       await ticket.update({ queueOptionId: option?.id });
     }
@@ -1599,15 +1607,15 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
     const botButton = async () => {
       const buttons = [];
       queueOptions.forEach((option, i) => {
-        buttons.push({
-          buttonId: `${option.option}`,
-          buttonText: { displayText: option.title },
-          type: 4
-        });
-      });
+  buttons.push({
+    buttonId: `${String.fromCharCode(65 + i)}`,
+    buttonText: { displayText: option.title },
+    type: 4
+  });
+});
       buttons.push({
         buttonId: `#`,
-        buttonText: { displayText: "Menu inicial *[ 0 ]* Menu anterior" },
+        buttonText: { displayText: "Menu inicial *x* Menu anterior" },
         type: 4
       });
 
@@ -1629,10 +1637,10 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
       let options = "";
 
       queueOptions.forEach((option, i) => {
-        options += `*[ ${option.option} ]* - ${option.title}\n`;
+        options += `*${String.fromCharCode(65 + i)}* - ${option.title}\n`;
       });
       //options += `\n*[ 0 ]* - Menu anterior`;
-      options += `\n*[ # ]* - Menu inicial`;
+      options += `\n*#* - Menu inicial`;
 
       const textMessage = {
         text: formatBody(`\u200e${queue.greetingMessage}\n\n${options}`, ticket.contact),
@@ -1725,7 +1733,7 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
           });
         });
         sectionsRows.push({
-          title: "Menu inicial *[ 0 ]* Menu anterior",
+          title: "Menu inicial *x* Menu anterior",
           rowId: `#`
         });
         const sections = [
@@ -1751,15 +1759,15 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
       const botButton = async () => {
         const buttons = [];
         queueOptions.forEach((option, i) => {
-          buttons.push({
-            buttonId: `${option.option}`,
-            buttonText: { displayText: option.title },
-            type: 4
-          });
-        });
+  buttons.push({
+    buttonId: `${String.fromCharCode(65 + i)}`,
+    buttonText: { displayText: option.title },
+    type: 4
+  });
+});
         buttons.push({
           buttonId: `#`,
-          buttonText: { displayText: "Menu inicial *[ 0 ]* Menu anterior" },
+          buttonText: { displayText: "Menu inicial *x* Menu anterior" },
           type: 4
         });
 
@@ -1782,10 +1790,10 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
         let options = "";
 
         queueOptions.forEach((option, i) => {
-          options += `*[ ${option.option} ]* - ${option.title}\n`;
+          options += `*${String.fromCharCode(65 + i)}* - ${option.title}\n`;
         });
-        options += `\n*[ 0 ]* - Menu anterior`;
-        options += `\n*[ # ]* - Menu inicial`;
+        options += `\n*x* - Menu anterior`;
+        options += `\n*#* - Menu inicial`;
         const textMessage = {
           text: formatBody(`\u200e${currentOption.message}\n\n${options}`, ticket.contact),
         };
@@ -1837,29 +1845,46 @@ export const handleMessageIntegration = async (
 ): Promise<void> => {
   const msgType = getTypeMessage(msg);
 
-  if (queueIntegration.type === "n8n" || queueIntegration.type === "webhook") {
-    if (queueIntegration?.urlN8N) {
-      const options = {
-        method: "POST",
-        url: queueIntegration?.urlN8N,
-        headers: {
-          "Content-Type": "application/json"
-        },
-        json: msg
-      };
+if (queueIntegration.type === "n8n" || queueIntegration.type === "webhook") {
+  if (!queueIntegration?.urlN8N) {
+    logger.error(`No se proporcionó una URL válida para la integración ${queueIntegration.type} (ID: ${queueIntegration.id})`);
+    throw new Error("URL de integración n8n/webhook no proporcionada");
+  }
+  // Validar que la URL sea un formato válido
+  const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/;
+  if (!urlRegex.test(queueIntegration.urlN8N)) {
+    logger.error(`URL inválida para integración ${queueIntegration.type}: ${queueIntegration.urlN8N}`);
+    throw new Error("URL de integración n8n/webhook inválida");
+  }
+  const options = {
+    method: "POST",
+    url: queueIntegration.urlN8N,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    json: msg
+  };
       try {
-        request(options, function (error, response) {
-          if (error) {
-            throw new Error(error);
-          }
-          else {
-            console.log(response.body);
-          }
-        });
-      } catch (error) {
-        throw new Error(error);
-      }
+  request(options, function (error, response) {
+    if (error) {
+      logger.error(`Error al enviar solicitud a n8n/webhook (${queueIntegration.urlN8N}): ${error.message}`);
+      throw new Error(`Error en la solicitud a n8n/webhook: ${error.message}`);
     }
+    if (response.statusCode !== 200) {
+      logger.error(`Respuesta no exitosa de n8n/webhook (${queueIntegration.urlN8N}): Código ${response.statusCode}, Mensaje: ${JSON.stringify(response.body)}`);
+      if (response.statusCode === 404) {
+        logger.warn(`Webhook no registrado en n8n. Asegúrese de que el workflow esté activo y no en modo de prueba.`);
+      }
+      throw new Error(`Respuesta no exitosa de n8n/webhook: Código ${response.statusCode}`);
+    }
+    logger.info(`Respuesta exitosa de n8n/webhook (${queueIntegration.urlN8N}): ${JSON.stringify(response.body)}`);
+  });
+} catch (error) {
+  logger.error(`Error en integración ${queueIntegration.type}: ${error.message}`);
+  Sentry.captureException(error);
+  throw error; // Mantener el lanzamiento del error para mantener la funcionalidad existente
+}
+// Mejora: Mejorado el manejo de errores y logging para integración n8n/webhook
 
   } else if (queueIntegration.type === "typebot") {
     console.log("🤖 ENTRÓ EN EL TYPEBOT");
@@ -1877,6 +1902,7 @@ const handleMessage = async (
   let mediaSent: Message | undefined;
 
   if (!isValidMsg(msg)) return;
+	
   try {
     let msgContact: IMe;
     let groupContact: Contact | undefined;
@@ -1968,6 +1994,57 @@ const handleMessage = async (
 
 
     await provider(ticket, msg, companyId, contact, wbot as WASocket);
+
+	// Mejora: Verificar si el mensaje es "salir" para detener el bot y cerrar el ticket
+if (!msg.key.fromMe && !isGroup && bodyMessage?.toLowerCase().trim() === "salir") {
+  try {
+    // Enviar mensaje de confirmación al usuario
+    const confirmationMessage = formatBody("Gracias por usar nuestro servicio. El bot ha sido detenido y tu ticket ha sido cerrado.", contact);
+    const sentMessage = await wbot.sendMessage(
+      `${contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
+      { text: confirmationMessage }
+    );
+    await verifyMessage(sentMessage, ticket, contact);
+
+    // Actualizar el ticket a estado "closed" manteniendo la cola
+    await UpdateTicketService({
+      ticketData: { status: "closed" },
+      ticketId: ticket.id,
+      companyId: ticket.companyId
+    });
+
+    // Actualizar ticket para reflejar el cierre
+    await ticket.reload();
+
+    // Emitir evento al frontend para reflejar el cierre del ticket
+    const io = getIO();
+    io.to(`company-${ticket.companyId}-open`)
+      .to(`queue-${ticket.queueId}-open`)
+      .emit(`company-${ticket.companyId}-ticket`, {
+        action: "delete",
+        ticket,
+        ticketId: ticket.id
+      });
+
+    io.to(`company-${ticket.companyId}-${ticket.status}`)
+      .to(`queue-${ticket.queueId}-${ticket.status}`)
+      .to(ticket.id.toString())
+      .emit(`company-${ticket.companyId}-ticket`, {
+        action: "update",
+        ticket,
+        ticketId: ticket.id
+      });
+
+    // Registrar la acción en el log
+    logger.info(`Ticket ${ticket.id} cerrado por el usuario ${contact.number} al escribir "salir"`);
+
+    // Detener el procesamiento del mensaje
+    return;
+  } catch (err) {
+    Sentry.captureException(err);
+    logger.error(`Error al cerrar ticket con "salir": ${err}`);
+  }
+}
 
     //DESABILITADO INTERAÇÕES NOS GRUPOS USANDO O && !isGroup e if (isGroup || contact.disableBot)//
 	
@@ -2482,19 +2559,20 @@ const verifyCampaignMessageAndCloseTicket = async (
 
 const filterMessages = (msg: WAMessage): boolean => {
   if (msg.message?.protocolMessage) return false;
-
-  if (
-    [
-      WAMessageStubType.REVOKE,
-      WAMessageStubType.E2E_DEVICE_CHANGED,
-      WAMessageStubType.E2E_IDENTITY_CHANGED,
-      WAMessageStubType.CIPHERTEXT
-    ].includes(msg.messageStubType as WAMessageStubType)
-  )
+  
+  if ([
+    WAMessageStubType.REVOKE,
+    WAMessageStubType.E2E_DEVICE_CHANGED,
+    WAMessageStubType.E2E_IDENTITY_CHANGED,
+    WAMessageStubType.CIPHERTEXT
+  ].includes(msg.messageStubType)) // <- CORRECCIÓN: Eliminé el "as WAMessageStubType"
+  {
     return false;
-
+  }
+  
   return true;
 };
+
 const wbotMessageListener = async (wbot: Session, companyId: number): Promise<void> => {
   try {
     wbot.ev.on("messages.upsert", async (messageUpsert: ImessageUpsert) => {
