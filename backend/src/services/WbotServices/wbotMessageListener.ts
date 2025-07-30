@@ -722,7 +722,7 @@ const handleOpenAi = async (
      contact.name || "Amigo(a)"
    )} para identificar al cliente.\nTu respuesta debe usar como máximo ${prompt.maxTokens
    } tokens y asegúrate de no cortar el final.\nSiempre que sea posible, menciona su nombre para que la atención sea más personalizada y cordial. Cuando la respuesta requiera una transferencia al sector de atención, comienza tu respuesta con 'Acción: Transferir al sector de atención'.\n
-   ${prompt.prompt}\n`;  
+   ${prompt.prompt}\n`;
 
   let messagesOpenAi: ChatCompletionRequestMessage[] = [];
 
@@ -759,7 +759,7 @@ const handleOpenAi = async (
       response = response
         .replace("Acción: Transferir al sector de atención", "")
         .trim(); // Elimina la instrucción del mensaje final al cliente
-    }    
+    }
 
     if (prompt.voice === "texto") {
       const sentMessage = await wbot.sendMessage(msg.key.remoteJid!, {
@@ -819,13 +819,13 @@ const handleOpenAi = async (
        temperature: prompt.temperature
      });
      let response = chat.data.choices[0].message?.content;
- 
+
      if (response?.includes("Acción: Transferir al sector de atención")) {
        await transferQueue(prompt.queueId, ticket, contact);
        response = response
          .replace("Acción: Transferir al sector de atención", "")
          .trim(); // Limpia la instrucción del mensaje antes de enviarlo al cliente
-     }    
+     }
      if (prompt.voice === "texto") {
        const sentMessage = await wbot.sendMessage(msg.key.remoteJid!, {
          text: response!
@@ -1112,7 +1112,7 @@ const isValidMsg = (msg: proto.IWebMessageInfo): boolean => {
 
        // Envía información extra a Sentry para facilitar el rastreo del error
        Sentry.setExtra("Mensaje", { BodyMsg: msg.message, msg, msgType });
- 
+
        // Captura una excepción personalizada en Sentry para notificar que apareció un nuevo tipo de mensaje
        Sentry.captureException(new Error("Nuevo tipo de mensaje en isValidMsg"));
      }
@@ -1229,7 +1229,7 @@ const verifyQueue = async (
     const textMessage = {
       text: formatBody(`\u200e${greetingMessage}\n\n${options}\n_Escriba_ *salir* _para cerrar el bot o repararlo_\n`, contact),
     };
-    
+
     let lastMsg = map_msg.get(contact.number);
     let invalidOption = "Opción inválida, por favor, elija una opción válida.\n\n";
 
@@ -1260,7 +1260,7 @@ const verifyQueue = async (
       // Na 3a tentativa, seleciona automaticamente a primeira fila
       const firstQueue = head(queues);
       let chatbot = false;
-      
+
       if (firstQueue?.options) {
         chatbot = firstQueue.options.length > 0;
       }
@@ -1458,7 +1458,7 @@ export const handleRating = async (
     // Remover esses campos, já que queremos manter a fila
     queueOptionId: null,
     userId: null,
-    status: "closed", 
+    status: "closed",
     // Não removemos queueId, pois a fila deve ser mantida
   });
 
@@ -1519,9 +1519,9 @@ const handleChartbot = async (ticket: Ticket, msg: WAMessage, wbot: Session, don
     const count = await QueueOption.count({
       where: { parentId: ticket.queueOptionId },
     });
-    
-  
-  
+
+
+
   	let option: any = {};
 if (count == 1) {
   option = await QueueOption.findOne({
@@ -1537,7 +1537,7 @@ if (count == 1) {
     option = queueOptions[letterIndex];
   }
 }
-  
+
     if (option) {
       await ticket.update({ queueOptionId: option?.id });
     }
@@ -1679,7 +1679,7 @@ const option = letterIndex >= 0 && letterIndex < queue?.options.length ? queue.o
         ["createdAt", "ASC"],
       ],
     });
-	
+
 	if (queueOptions.length === 0) {
 	const textMessage = {
 	  text: formatBody(`\u200e${currentOption.message}`, ticket.contact),
@@ -1689,7 +1689,7 @@ const option = letterIndex >= 0 && letterIndex < queue?.options.length ? queue.o
 	  `${ticket.contact.number}@${ticket.isGroup ? "g.us" : "s.whatsapp.net"}`,
 	  textMessage
 	);
-	
+
 	await verifyMessage(sendMsg, ticket, ticket.contact);
 		        if (currentOption.mediaPath !== null && currentOption.mediaPath !== "")  {
 
@@ -1704,7 +1704,7 @@ const option = letterIndex >= 0 && letterIndex < queue?.options.length ? queue.o
         }
 
 	await verifyMessage(sendMsg, ticket, ticket.contact);
-	
+
 	await ticket.update({
 	  queueOptionId: null,
 	  chatbot: false,
@@ -1902,7 +1902,7 @@ const handleMessage = async (
   let mediaSent: Message | undefined;
 
   if (!isValidMsg(msg)) return;
-	
+
   try {
     let msgContact: IMe;
     let groupContact: Contact | undefined;
@@ -1955,7 +1955,7 @@ const handleMessage = async (
           groupContactCache.set(msg.key.remoteJid, result);
         }
         return result;
-      });      
+      });
     }
 
     const whatsapp = await ShowWhatsAppService(wbot.id!, companyId);
@@ -1982,12 +1982,12 @@ const handleMessage = async (
       },
       order: [["createdAt", "DESC"]],
     });
-    
+
 
     if (unreadMessages === 0 && whatsapp.complationMessage && formatBody(whatsapp.complationMessage, contact).trim().toLowerCase() === lastMessage?.body.trim().toLowerCase()) {
       return;
     }
-    
+
 
     const ticket = await FindOrCreateTicketService(contact, wbot.id!, unreadMessages, companyId, groupContact);
 
@@ -2047,9 +2047,9 @@ if (!msg.key.fromMe && !isGroup && bodyMessage?.toLowerCase().trim() === "salir"
 }
 
     //DESABILITADO INTERAÇÕES NOS GRUPOS USANDO O && !isGroup e if (isGroup || contact.disableBot)//
-	
+
 	// voltar para o menu inicial
-	
+
     // voltar para o menu inicia
     if (bodyMessage == "#" && !isGroup) {
       await ticket.update({
@@ -2122,9 +2122,9 @@ if (!msg.key.fromMe && !isGroup && bodyMessage?.toLowerCase().trim() === "salir"
       Sentry.captureException(e);
       console.log(e);
     }
-	
 
-    // Atualiza o ticket se a ultima mensagem foi enviada por mim, para que possa ser finalizado. 
+
+    // Atualiza o ticket se a ultima mensagem foi enviada por mim, para que possa ser finalizado.
     try {
       await ticket.update({
         fromMe: msg.key.fromMe,
@@ -2139,7 +2139,7 @@ if (!msg.key.fromMe && !isGroup && bodyMessage?.toLowerCase().trim() === "salir"
     } else {
       await verifyMessage(msg, ticket, contact);
     }
-	
+
     if (isGroup || contact.disableBot) {
       return;
     }
@@ -2362,7 +2362,7 @@ if (!msg.key.fromMe && !isGroup && bodyMessage?.toLowerCase().trim() === "salir"
           const startTimeA = moment(schedule.startTimeA, "HH:mm");
           const endTimeA = moment(schedule.endTimeA, "HH:mm");
           const startTimeB = moment(schedule.startTimeB, "HH:mm");
-          const endTimeB = moment(schedule.endTimeB, "HH:mm");		  
+          const endTimeB = moment(schedule.endTimeB, "HH:mm");
 
           if (now.isBefore(startTimeA) || now.isAfter(endTimeA) && (now.isBefore(startTimeB) || now.isAfter(endTimeB))) {
             const body = queue.outOfHoursMessage;
@@ -2559,7 +2559,7 @@ const verifyCampaignMessageAndCloseTicket = async (
 
 const filterMessages = (msg: WAMessage): boolean => {
   if (msg.message?.protocolMessage) return false;
-  
+
   if ([
     WAMessageStubType.REVOKE,
     WAMessageStubType.E2E_DEVICE_CHANGED,
@@ -2569,7 +2569,7 @@ const filterMessages = (msg: WAMessage): boolean => {
   {
     return false;
   }
-  
+
   return true;
 };
 
@@ -2579,6 +2579,8 @@ const wbotMessageListener = async (wbot: Session, companyId: number): Promise<vo
       const messages = messageUpsert.messages
         .filter(filterMessages)
         .map(msg => msg);
+
+
 
       if (!messages) return;
 
