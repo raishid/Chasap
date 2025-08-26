@@ -1,0 +1,101 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      BACKEND_URL: ${BACKEND_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      PROXY_PORT: ${PROXY_PORT}
+      PORT: ${PORT}
+      IMG_EXT: ${IMG_EXT}
+      NGROK_URL: ${NGROK_URL}
+      DB_DIALECT: ${DB_DIALECT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      REDIS_URI: redis://redis:6379
+      REDIS_OPT_LIMITER_MAX: 1
+      REDIS_OPT_LIMITER_DURATION: 3000
+      USER_LIMIT: ${USER_LIMIT:-1000}
+      CONNECTIONS_LIMIT: ${CONNECTIONS_LIMIT:-100000}
+      CLOSED_SEND_BY_ME: ${CLOSED_SEND_BY_ME:-true}
+      GERENCIANET_SANDBOX: ${GERENCIANET_SANDBOX:-false}
+      GERENCIANET_CLIENT_ID: ${GERENCIANET_CLIENT_ID}
+      GERENCIANET_CLIENT_SECRET: ${GERENCIANET_CLIENT_SECRET}
+      GERENCIANET_PIX_CERT: ${GERENCIANET_PIX_CERT}
+      GERENCIANET_PIX_KEY: ${GERENCIANET_PIX_KEY}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_PORT: ${MAIL_PORT}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    volumes:
+      - auth_data:/usr/src/app/.wwebjs_auth/
+    networks:
+      - whaticket-network
+
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-wapi}
+      POSTGRES_USER: ${DB_USER:-root}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - whaticket-network
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    environment:
+      REDIS_OPT_LIMITER_MAX: ${REDIS_OPT_LIMITER_MAX:-1}
+      REDIST_OPT_LIMITED_DURATION: ${REDIST_OPT_LIMITED_DURATION:-1}
+    networks:
+      - whaticket-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-http://localhost:3000}
+        REACT_APP_HOURS_CLOSE_TICKETS_AUTO: ${REACT_APP_HOURS_CLOSE_TICKETS_AUTO:-1}
+        REACT_APP_FACEBOOK_APP_ID: ${REACT_APP_FACEBOOK_APP_ID}
+        REACT_APP_NAME_SYSTEM: ${REACT_APP_NAME_SYSTEM:-Whaticket}
+        REACT_APP_NUMBER_SUPPORT: ${REACT_APP_NUMBER_SUPPORT}
+        REACT_APP_TURNSTILE_SITE_KEY: ${REACT_APP_TURNSTILE_SITE_KEY}
+    restart: unless-stopped
+    environment:
+      REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-http://localhost:3000}
+      REACT_APP_HOURS_CLOSE_TICKETS_AUTO: ${REACT_APP_HOURS_CLOSE_TICKETS_AUTO:-1}
+      REACT_APP_FACEBOOK_APP_ID: ${REACT_APP_FACEBOOK_APP_ID}
+      REACT_APP_NAME_SYSTEM: ${REACT_APP_NAME_SYSTEM:-Whaticket}
+      REACT_APP_NUMBER_SUPPORT: ${REACT_APP_NUMBER_SUPPORT}
+      REACT_APP_TURNSTILE_SECRET_KEY: ${REACT_APP_TURNSTILE_SECRET_KEY}
+      REACT_APP_TURNSTILE_SITE_KEY: ${REACT_APP_TURNSTILE_SITE_KEY}
+    ports:
+      - "${FRONTEND_PORT:-3001}:3001"
+    networks:
+      - whaticket-network
+
+volumes:
+  postgres_data:
+  auth_data:
+
+networks:
+  whaticket-network:
+    driver: bridge
