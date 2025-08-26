@@ -91,7 +91,8 @@
     "builddev": "export NODE_OPTIONS=\"--max-old-space-size=8192\" && react-scripts build",
     "test": "export NODE_OPTIONS=\"--max-old-space-size=8192\" && react-scripts test",
     "eject": "export NODE_OPTIONS=\"--max-old-space-size=8192\" && react-scripts eject",
-    "serve": "node server.js"
+    "serve": "node server.js",
+    "start:prod": "bun server.js"
   },
   "eslintConfig": {
     "extends": "react-app"
